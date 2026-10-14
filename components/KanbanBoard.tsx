@@ -24,9 +24,11 @@ import TodoMeta from "./TodoMeta";
 
 function CardBody({
   todo,
+  onEdit,
   onDelete,
 }: {
   todo: Todo;
+  onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
 }) {
   return (
@@ -41,13 +43,22 @@ function CardBody({
         {todo.text}
       </p>
       <TodoMeta todo={todo} />
-      <button
-        onClick={() => onDelete(todo.id)}
-        aria-label="Hapus tugas"
-        className="mt-1 text-xs text-neutral-300 transition hover:text-red-500 dark:text-neutral-600 dark:hover:text-red-400"
-      >
-        Hapus
-      </button>
+      <div className="mt-1 flex gap-3">
+        <button
+          onClick={() => onEdit(todo)}
+          aria-label="Edit tugas"
+          className="text-xs text-neutral-300 transition hover:text-neutral-900 dark:text-neutral-600 dark:hover:text-neutral-100"
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => onDelete(todo.id)}
+          aria-label="Hapus tugas"
+          className="text-xs text-neutral-300 transition hover:text-red-500 dark:text-neutral-600 dark:hover:text-red-400"
+        >
+          Hapus
+        </button>
+      </div>
     </div>
   );
 }
@@ -74,7 +85,7 @@ function SortableCard({
       title="Klik dua kali untuk edit, tarik untuk pindah / mengurutkan"
       className={`cursor-grab touch-none ${isDragging ? "opacity-40" : ""}`}
     >
-      <CardBody todo={todo} onDelete={onDelete} />
+      <CardBody todo={todo} onEdit={onEdit} onDelete={onDelete} />
     </div>
   );
 }
@@ -205,7 +216,7 @@ export default function KanbanBoard({
       <DragOverlay>
         {activeTodo ? (
           <div className="cursor-grabbing rotate-2">
-            <CardBody todo={activeTodo} onDelete={onDelete} />
+            <CardBody todo={activeTodo} onEdit={onEdit} onDelete={onDelete} />
           </div>
         ) : null}
       </DragOverlay>

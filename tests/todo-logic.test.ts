@@ -43,6 +43,21 @@ describe("normalizeTodo", () => {
     expect(normalizeTodo({ id: "a", text: "x", status: "bogus" })).toBeNull();
   });
 
+  it("menolak data tanpa status maupun completed", () => {
+    expect(normalizeTodo({ id: "a", text: "x" })).toBeNull();
+  });
+
+  it("mengisi createdAt bila tidak ada, menjaga bila ada", () => {
+    expect(normalizeTodo({ id: "a", text: "x", status: "todo" })?.createdAt).toBeGreaterThan(0);
+    expect(normalizeTodo({ id: "a", text: "x", status: "todo", createdAt: 42 })?.createdAt).toBe(42);
+    expect(normalizeTodo({ id: "a", text: "x", status: "todo", createdAt: "42" })?.createdAt).not.toBe("42");
+  });
+
+  it("mengabaikan dueDate dengan format salah", () => {
+    expect(normalizeTodo({ id: "a", text: "x", status: "todo", dueDate: "2026/10/01" })?.dueDate).toBeUndefined();
+    expect(normalizeTodo({ id: "a", text: "x", status: "todo", dueDate: "" })?.dueDate).toBeUndefined();
+  });
+
   it("menjaga dueDate/priority valid dan membuang yang tidak valid", () => {
     const t = normalizeTodo({
       id: "a",
