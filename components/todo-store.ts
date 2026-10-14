@@ -4,23 +4,61 @@ import { loadTodos, normalizeTodo } from "./todo-logic";
 const EMPTY: Todo[] = [];
 
 let todos: Todo[] = loadTodos();
+
 const listeners = new Set<() => void>();
+const errorListeners = new Set<(message: string) => void>();
 
 function persist() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   } catch {
-    // Storage penuh atau tidak tersedia; abaikan.
+    notifyPersistError(
+      "Gagal menyimpan: penyimpanan browser penuh atau tidak tersedia. Perubahan bisa hilang saat halaman ditutup."
+    );
   }
+}
+
+function notifyPersistError(message: string) {
+  for (const listener of errorListeners) listener(message);
 }
 
 function notify() {
   for (const listener of listeners) listener();
 }
 
+function reloadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      todos = [];
+    } else {
+      const parsed = JSON.parse(raw);
+      todos = Array.isArray(parsed)
+        ? parsed.map(normalizeTodo).filter((t): t is Todo => t !== null)
+        : [];
+    }
+  } catch {
+    return;
+  }
+  notify();
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key === STORAGE_KEY) reloadFromStorage();
+  });
+}
+
 export function subscribeTodos(listener: () => void): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);
+}
+
+export function subscribeStorageError(
+  listener: (message: string) => void
+): () => void {
+  errorListeners.add(listener);
+  return () => errorListeners.delete(listener);
 }
 
 export function getTodos(): Todo[] {

@@ -20,6 +20,10 @@ All data is stored locally in your browser (`localStorage`). No backend, no trac
 - **Multiple views** — switch between Kanban, Table, List, and Checklist; the choice is remembered.
 - **Due dates & priorities** — optional per-task; overdue dates are highlighted.
 - **Search & status filter** — quickly narrow down what you are looking for.
+- **Sorting** — order tasks by newest, oldest, priority, or due date.
+- **Sub-tasks** — break a task down and check off its steps.
+- **Undo delete** — an "Urungkan" (undo) action appears right after deleting.
+- **Cross-tab sync** — changes in one tab instantly appear in another.
 - **Light/dark theme** — manual toggle, follows system preference by default.
 - **Import/export** — back up or migrate your tasks as JSON.
 - **PWA** — install it on your phone or desktop and keep working offline.

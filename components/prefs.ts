@@ -48,6 +48,21 @@ if (typeof document !== "undefined") {
   document.documentElement.classList.toggle("dark", theme === "dark");
 }
 
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key === THEME_STORAGE_KEY) {
+      const next = event.newValue;
+      if (next === "light" || next === "dark") setTheme(next);
+    } else if (event.key === VIEW_STORAGE_KEY) {
+      const next = event.newValue;
+      if (VIEWS.includes(next as View)) {
+        view = next as View;
+        for (const listener of viewListeners) listener();
+      }
+    }
+  });
+}
+
 export function subscribeTheme(listener: () => void): () => void {
   themeListeners.add(listener);
   return () => themeListeners.delete(listener);

@@ -3,9 +3,11 @@
 export default function Toast({
   message,
   onClose,
+  action,
 }: {
   message: string;
   onClose: () => void;
+  action?: React.ReactNode;
 }) {
   return (
     <div
@@ -25,6 +27,7 @@ export default function Toast({
       <span className="flex-1 pt-px text-sm font-medium text-neutral-800 dark:text-neutral-100">
         {message}
       </span>
+      {action}
       <button
         onClick={onClose}
         aria-label="Tutup notifikasi"

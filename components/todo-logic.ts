@@ -2,7 +2,9 @@ import {
   PRIORITIES,
   STATUSES,
   STORAGE_KEY,
+  type SortKey,
   type Status,
+  type Subtask,
   type Todo,
 } from "./todo-types";
 
@@ -42,7 +44,88 @@ export function normalizeTodo(raw: unknown): Todo | null {
   ) {
     todo.priority = t.priority as Todo["priority"];
   }
+  if (Array.isArray(t.subtasks)) {
+    const subtasks = t.subtasks
+      .map((raw) => {
+        if (typeof raw !== "object" || raw === null) return null;
+        const st = raw as Record<string, unknown>;
+        if (typeof st.id !== "string" || typeof st.text !== "string") return null;
+        return { id: st.id, text: st.text, done: st.done === true } satisfies Subtask;
+      })
+      .filter((st): st is Subtask => st !== null);
+    if (subtasks.length > 0) todo.subtasks = subtasks;
+  }
   return todo;
+}
+
+const PRIORITY_WEIGHT: Record<Todo["priority"] & string, number> = {
+  high: 0,
+  medium: 1,
+  low: 2,
+};
+
+export function sortTodos(todos: Todo[], key: SortKey): Todo[] {
+  const list = [...todos];
+  switch (key) {
+    case "newest":
+      return list.sort((a, b) => b.createdAt - a.createdAt);
+    case "created":
+      return list.sort((a, b) => a.createdAt - b.createdAt);
+    case "priority":
+      return list.sort(
+        (a, b) =>
+          (PRIORITY_WEIGHT[a.priority ?? "low"] ?? 3) -
+          (PRIORITY_WEIGHT[b.priority ?? "low"] ?? 3)
+      );
+    case "due":
+      return list.sort((a, b) => {
+        if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+        if (a.dueDate) return -1;
+        if (b.dueDate) return 1;
+        return 0;
+      });
+  }
+}
+
+export function subtaskProgress(todo: Todo): { done: number; total: number } {
+  const list = todo.subtasks ?? [];
+  return { done: list.filter((st) => st.done).length, total: list.length };
+}
+
+export function addSubtaskToList(prev: Todo[], todoId: string, text: string): Todo[] {
+  const st: Subtask = { id: generateId(), text, done: false };
+  return prev.map((t) =>
+    t.id === todoId ? { ...t, subtasks: [...(t.subtasks ?? []), st] } : t
+  );
+}
+
+export function toggleSubtaskInList(
+  prev: Todo[],
+  todoId: string,
+  subtaskId: string
+): Todo[] {
+  return prev.map((t) =>
+    t.id === todoId
+      ? {
+          ...t,
+          subtasks: (t.subtasks ?? []).map((st) =>
+            st.id === subtaskId ? { ...st, done: !st.done } : st
+          ),
+        }
+      : t
+  );
+}
+
+export function deleteSubtaskFromList(
+  prev: Todo[],
+  todoId: string,
+  subtaskId: string
+): Todo[] {
+  return prev.map((t) =>
+    t.id === todoId
+      ? { ...t, subtasks: (t.subtasks ?? []).filter((st) => st.id !== subtaskId) }
+      : t
+  );
 }
 
 export function loadTodos(): Todo[] {
