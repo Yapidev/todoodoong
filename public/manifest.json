@@ -1,0 +1,17 @@
+{
+  "name": "Todo Kanban",
+  "short_name": "Todo Kanban",
+  "description": "Aplikasi todo dengan board kanban, drag-and-drop, dan berbagai tampilan.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#171717",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
