@@ -43,7 +43,7 @@ export function updateTodos(updater: (prev: Todo[]) => Todo[]): void {
 
 export function exportTodos(): string {
   return JSON.stringify(
-    { app: "todo-kanban", version: 1, exportedAt: new Date().toISOString(), todos },
+    { app: "todoodoong", version: 1, exportedAt: new Date().toISOString(), todos },
     null,
     2
   );

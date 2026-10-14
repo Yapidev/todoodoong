@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in improving Todo Kanban!
+Thanks for your interest in improving Todoodoong!
 
 ## Getting started
 

@@ -1,11 +1,11 @@
-# Todo Kanban
+# Todoodoong
 
 A free, offline-first todo app with a Kanban board, drag-and-drop, and switchable views — your tasks, your device, no account required.
 
 All data is stored locally in your browser (`localStorage`). No backend, no tracking, works offline as an installable PWA.
 
 <!-- TODO: add a screenshot here, e.g. docs/screenshot.png -->
-<!-- ![Todo Kanban screenshot](docs/screenshot.png) -->
+<!-- ![Todoodoong screenshot](docs/screenshot.png) -->
 
 ## Features
 
@@ -29,8 +29,8 @@ All data is stored locally in your browser (`localStorage`). No backend, no trac
 ### Install & Run
 
 ```bash
-git clone https://github.com/<your-username>/todo-app.git
-cd todo-app
+git clone https://github.com/<your-username>/todoodoong.git
+cd todoodoong
 npm install
 npm run dev
 ```

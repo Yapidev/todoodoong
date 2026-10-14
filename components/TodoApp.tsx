@@ -165,7 +165,7 @@ export default function TodoApp() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `todo-kanban-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `todoodoong-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -196,7 +196,7 @@ export default function TodoApp() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center px-4 py-8 sm:py-12">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight sm:text-4xl">Todo Kanban</h1>
+      <h1 className="mb-2 text-3xl font-bold tracking-tight sm:text-4xl">Todoodoong</h1>
       <p className="mb-8 text-sm text-neutral-500 dark:text-neutral-400">
         Catat tugas, atur urutan, pilih tampilan sesuai kebutuhanmu.
       </p>

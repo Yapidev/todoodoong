@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Todo Kanban",
+  title: "Todoodoong",
   description:
     "Todo app dengan board kanban, drag-and-drop, tabel, list, dan checklist. Data tersimpan di perangkatmu.",
   manifest: "/manifest.json",

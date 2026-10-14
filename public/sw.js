@@ -1,4 +1,4 @@
-const CACHE_NAME = "todo-kanban-v1";
+const CACHE_NAME = "todoodoong-v1";
 
 self.addEventListener("install", () => {
   self.skipWaiting();

@@ -1,6 +1,6 @@
 {
-  "name": "Todo Kanban",
-  "short_name": "Todo Kanban",
+  "name": "Todoodoong",
+  "short_name": "Todoodoong",
   "description": "Aplikasi todo dengan board kanban, drag-and-drop, dan berbagai tampilan.",
   "start_url": "/",
   "display": "standalone",
