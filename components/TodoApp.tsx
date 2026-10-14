@@ -364,7 +364,6 @@ export default function TodoApp() {
           onEdit={setEditingTodo}
           onDelete={requestDeleteTodo}
           onMove={moveTodo}
-          onStatusChange={setTodoStatus}
           onReorder={reorderTodo}
         />
       )}

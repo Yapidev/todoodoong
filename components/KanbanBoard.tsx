@@ -22,7 +22,6 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   COLUMNS,
   STATUSES,
-  statusLabel,
   type Status,
   type Todo,
 } from "./todo-types";
@@ -32,12 +31,10 @@ function CardBody({
   todo,
   onEdit,
   onDelete,
-  onStatusChange,
 }: {
   todo: Todo;
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
-  onStatusChange: (id: string, status: Status) => void;
 }) {
   return (
     <div className="rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
@@ -62,18 +59,6 @@ function CardBody({
         >
           Edit
         </button>
-        <select
-          value={todo.status}
-          onChange={(e) => onStatusChange(todo.id, e.target.value as Status)}
-          aria-label="Pindah kolom"
-          className="cursor-pointer rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-xs text-neutral-400 outline-none transition hover:text-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:hover:text-neutral-100"
-        >
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {statusLabel(s)}
-            </option>
-          ))}
-        </select>
         <button
           onClick={() => onDelete(todo.id)}
           aria-label="Hapus tugas"
@@ -90,12 +75,10 @@ function SortableCard({
   todo,
   onEdit,
   onDelete,
-  onStatusChange,
 }: {
   todo: Todo;
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
-  onStatusChange: (id: string, status: Status) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: todo.id });
@@ -110,12 +93,7 @@ function SortableCard({
       title="Klik dua kali untuk edit, tarik untuk pindah / mengurutkan"
       className={`cursor-grab touch-none ${isDragging ? "opacity-40" : ""}`}
     >
-      <CardBody
-        todo={todo}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onStatusChange={onStatusChange}
-      />
+      <CardBody todo={todo} onEdit={onEdit} onDelete={onDelete} />
     </div>
   );
 }
@@ -125,13 +103,11 @@ function Column({
   todos,
   onEdit,
   onDelete,
-  onStatusChange,
 }: {
   status: Status;
   todos: Todo[];
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
-  onStatusChange: (id: string, status: Status) => void;
 }) {
   const column = COLUMNS.find((c) => c.key === status)!;
   const { setNodeRef, isOver } = useDroppable({ id: status });
@@ -163,7 +139,6 @@ function Column({
               todo={todo}
               onEdit={onEdit}
               onDelete={onDelete}
-              onStatusChange={onStatusChange}
             />
           ))}
         </SortableContext>
@@ -182,14 +157,12 @@ export default function KanbanBoard({
   onEdit,
   onDelete,
   onMove,
-  onStatusChange,
   onReorder,
 }: {
   todos: Todo[];
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
   onMove: (id: string, status: Status, beforeId?: string) => void;
-  onStatusChange: (id: string, status: Status) => void;
   onReorder: (activeId: string, overId: string) => void;
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -245,19 +218,13 @@ export default function KanbanBoard({
             todos={todos.filter((t) => t.status === status)}
             onEdit={onEdit}
             onDelete={onDelete}
-            onStatusChange={onStatusChange}
           />
         ))}
       </div>
       <DragOverlay>
         {activeTodo ? (
           <div className="cursor-grabbing rotate-2">
-            <CardBody
-              todo={activeTodo}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onStatusChange={onStatusChange}
-            />
+            <CardBody todo={activeTodo} onEdit={onEdit} onDelete={onDelete} />
           </div>
         ) : null}
       </DragOverlay>
