@@ -37,7 +37,7 @@ function CardBody({
   onDelete: (id: string) => void;
 }) {
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="item-in rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
       <p
         className={`text-sm select-none ${
           todo.status === "done"

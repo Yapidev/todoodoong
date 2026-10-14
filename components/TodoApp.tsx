@@ -378,6 +378,7 @@ export default function TodoApp() {
           todos={filtered}
           onToggle={toggleDone}
           onEdit={setEditingTodo}
+          onDelete={requestDeleteTodo}
           onStatusChange={setTodoStatus}
           expandedId={expandedId}
           onExpand={(id) => setExpandedId((cur) => (cur === id ? null : id))}

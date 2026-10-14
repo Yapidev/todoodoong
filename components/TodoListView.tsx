@@ -18,7 +18,7 @@ export default function TodoListView({
         return (
           <li
             key={todo.id}
-            className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900"
+            className="item-in flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
           >
             <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
             <span
