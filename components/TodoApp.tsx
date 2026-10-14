@@ -2,31 +2,27 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import KanbanBoard from "./KanbanBoard";
+import Toast from "./Toast";
+import { AddTodoForm, EditTodoForm } from "./TodoForm";
 import TodoChecklist from "./TodoChecklist";
 import TodoListView from "./TodoListView";
 import TodoModal from "./TodoModal";
 import TodoTable from "./TodoTable";
 import {
-  COLUMNS,
-  PRIORITIES,
   STATUSES,
   statusLabel,
-  type Priority,
   type Status,
   type StatusFilter,
   type Todo,
   type View,
 } from "./todo-types";
 import {
-  addTodoToList,
   clearDoneFromList,
   deleteTodoFromList,
-  generateId,
   matchesQuery,
   moveTodoInList,
   reorderTodoInList,
   toggleDoneInList,
-  updateTodoInList,
 } from "./todo-logic";
 import {
   exportTodos,
@@ -67,15 +63,7 @@ export default function TodoApp() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [input, setInput] = useState("");
-  const [newStatus, setNewStatus] = useState<Status>("todo");
-  const [newDueDate, setNewDueDate] = useState("");
-  const [newPriority, setNewPriority] = useState<"none" | Priority>("none");
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editText, setEditText] = useState("");
-  const [editStatus, setEditStatus] = useState<Status>("todo");
-  const [editDueDate, setEditDueDate] = useState("");
-  const [editPriority, setEditPriority] = useState<"none" | Priority>("none");
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{
     message: string;
     confirm: () => void;
@@ -98,65 +86,18 @@ export default function TodoApp() {
   }, []);
 
   useEffect(() => {
-    if (!isModalOpen && editingId === null && confirmDelete === null) return;
+    if (!isModalOpen && editingTodo === null && confirmDelete === null) return;
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setIsModalOpen(false);
-        setEditingId(null);
+        setEditingTodo(null);
         setConfirmDelete(null);
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isModalOpen, editingId, confirmDelete]);
+  }, [isModalOpen, editingTodo, confirmDelete]);
 
-  function addTodo(e: React.FormEvent) {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text) return;
-    const todo: Todo = {
-      id: generateId(),
-      text,
-      status: newStatus,
-      createdAt: Date.now(),
-      ...(newDueDate ? { dueDate: newDueDate } : {}),
-      ...(newPriority !== "none" ? { priority: newPriority } : {}),
-    };
-    updateTodos((prev) => addTodoToList(prev, todo));
-    showToast("Tugas ditambahkan");
-    setInput("");
-    setNewStatus("todo");
-    setNewDueDate("");
-    setNewPriority("none");
-    setIsModalOpen(false);
-  }
-
-  function startEdit(todo: Todo) {
-    setEditingId(todo.id);
-    setEditText(todo.text);
-    setEditStatus(todo.status);
-    setEditDueDate(todo.dueDate ?? "");
-    setEditPriority(todo.priority ?? "none");
-  }
-
-  function saveEdit(id: string) {
-    const text = editText.trim();
-    if (!text) {
-      setEditingId(null);
-      requestDeleteTodo(id);
-    } else {
-      updateTodos((prev) =>
-        updateTodoInList(prev, id, {
-          text,
-          status: editStatus,
-          dueDate: editDueDate || undefined,
-          priority: editPriority === "none" ? undefined : editPriority,
-        })
-      );
-      showToast("Tugas diperbarui");
-      setEditingId(null);
-    }
-  }
 
   function moveTodo(id: string, status: Status, beforeId?: string) {
     updateTodos((prev) => moveTodoInList(prev, id, status, beforeId));
@@ -341,20 +282,20 @@ export default function TodoApp() {
       {view === "kanban" && (
         <KanbanBoard
           todos={filtered}
-          onEdit={startEdit}
+          onEdit={setEditingTodo}
           onDelete={requestDeleteTodo}
           onMove={moveTodo}
           onReorder={reorderTodo}
         />
       )}
       {view === "table" && (
-        <TodoTable todos={filtered} onEdit={startEdit} onDelete={requestDeleteTodo} />
+        <TodoTable todos={filtered} onEdit={setEditingTodo} onDelete={requestDeleteTodo} />
       )}
       {view === "list" && (
-        <TodoListView todos={filtered} onEdit={startEdit} onDelete={requestDeleteTodo} />
+        <TodoListView todos={filtered} onEdit={setEditingTodo} onDelete={requestDeleteTodo} />
       )}
       {view === "checklist" && (
-        <TodoChecklist todos={filtered} onToggle={toggleDone} onEdit={startEdit} />
+        <TodoChecklist todos={filtered} onToggle={toggleDone} onEdit={setEditingTodo} />
       )}
 
       {todos.length === 0 && (
@@ -374,35 +315,7 @@ export default function TodoApp() {
         </p>
       )}
 
-      {toast && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="toast-in fixed right-4 top-4 z-40 flex w-full max-w-xs items-start gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3.5 shadow-xl dark:border-neutral-700 dark:bg-neutral-900"
-        >
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/15 text-green-600 dark:text-green-400">
-            <svg viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3">
-              <path
-                fillRule="evenodd"
-                d="M16.704 5.69a.75.75 0 0 1 .011 1.06l-7.301 7.5a.75.75 0 0 1-1.073.012L3.3 9.77a.75.75 0 1 1 1.06-1.06l4.36 4.42 6.983-7.16a.75.75 0 0 1 1.06-.02Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </span>
-          <span className="flex-1 pt-px text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            {toast.message}
-          </span>
-          <button
-            onClick={() => setToast(null)}
-            aria-label="Tutup notifikasi"
-            className="shrink-0 rounded-md p-0.5 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
-          >
-            <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-              <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
-            </svg>
-          </button>
-        </div>
-      )}
+      {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
 
       {confirmDelete && (
         <TodoModal title="Hapus Tugas?" onClose={() => setConfirmDelete(null)}>
@@ -427,164 +340,22 @@ export default function TodoApp() {
       )}
 
       {isModalOpen && (
-        <TodoModal title="Tambah Tugas" onClose={() => setIsModalOpen(false)}>
-          <form onSubmit={addTodo} className="space-y-3">
-            <input
-              type="text"
-              value={input}
-              autoFocus
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Tugas baru..."
-              className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                  Kolom
-                </label>
-                <select
-                  value={newStatus}
-                  onChange={(e) => setNewStatus(e.target.value as Status)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-                >
-                  {COLUMNS.map((c) => (
-                    <option key={c.key} value={c.key}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                  Prioritas
-                </label>
-                <select
-                  value={newPriority}
-                  onChange={(e) =>
-                    setNewPriority(e.target.value as "none" | Priority)
-                  }
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-                >
-                  <option value="none">Tidak ada</option>
-                  {PRIORITIES.map((p) => (
-                    <option key={p.key} value={p.key}>
-                      {p.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                Tenggat (opsional)
-              </label>
-              <input
-                type="date"
-                value={newDueDate}
-                onChange={(e) => setNewDueDate(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
-              >
-                Simpan
-              </button>
-            </div>
-          </form>
-        </TodoModal>
+        <AddTodoForm
+          onClose={() => setIsModalOpen(false)}
+          onAdded={(m) => showToast(m)}
+        />
       )}
 
-      {editingId !== null && (
-        <TodoModal title="Edit Tugas" onClose={() => setEditingId(null)}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              saveEdit(editingId);
-            }}
-            className="space-y-3"
-          >
-            <input
-              type="text"
-              value={editText}
-              autoFocus
-              onChange={(e) => setEditText(e.target.value)}
-              className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                  Kolom
-                </label>
-                <select
-                  value={editStatus}
-                  onChange={(e) => setEditStatus(e.target.value as Status)}
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-                >
-                  {COLUMNS.map((c) => (
-                    <option key={c.key} value={c.key}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                  Prioritas
-                </label>
-                <select
-                  value={editPriority}
-                  onChange={(e) =>
-                    setEditPriority(e.target.value as "none" | Priority)
-                  }
-                  className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-                >
-                  <option value="none">Tidak ada</option>
-                  {PRIORITIES.map((p) => (
-                    <option key={p.key} value={p.key}>
-                      {p.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                Tenggat (opsional)
-              </label>
-              <input
-                type="date"
-                value={editDueDate}
-                onChange={(e) => setEditDueDate(e.target.value)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setEditingId(null)}
-                className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
-              >
-                Simpan
-              </button>
-            </div>
-          </form>
-        </TodoModal>
+      {editingTodo && (
+        <EditTodoForm
+          todo={editingTodo}
+          onClose={() => setEditingTodo(null)}
+          onSaved={(m) => {
+            setEditingTodo(null);
+            showToast(m);
+          }}
+          onEmptyText={(id) => requestDeleteTodo(id)}
+        />
       )}
     </main>
   );
