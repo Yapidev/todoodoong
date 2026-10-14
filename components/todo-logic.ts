@@ -1,6 +1,10 @@
-import { STATUSES, STORAGE_KEY, type Status, type Todo } from "./todo-types";
-
-const PRIORITIES = ["low", "medium", "high"];
+import {
+  PRIORITIES,
+  STATUSES,
+  STORAGE_KEY,
+  type Status,
+  type Todo,
+} from "./todo-types";
 
 function normalizeStatus(raw: Record<string, unknown>): Status | null {
   if (typeof raw.status === "string" && STATUSES.includes(raw.status as Status)) {
@@ -34,7 +38,7 @@ export function normalizeTodo(raw: unknown): Todo | null {
   }
   if (
     typeof t.priority === "string" &&
-    PRIORITIES.includes(t.priority)
+    PRIORITIES.some((p) => p.key === t.priority)
   ) {
     todo.priority = t.priority as Todo["priority"];
   }
@@ -52,6 +56,15 @@ export function loadTodos(): Todo[] {
   } catch {
     return [];
   }
+}
+
+export function generateId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `todo-${Date.now().toString(36)}-${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
 }
 
 export function addTodoToList(prev: Todo[], todo: Todo): Todo[] {
