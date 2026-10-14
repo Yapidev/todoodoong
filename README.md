@@ -1,6 +1,12 @@
 # Todoodoong
 
+[![CI](https://github.com/Yapidev/todoodoong/actions/workflows/ci.yml/badge.svg)](https://github.com/Yapidev/todoodoong/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-informational.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 A free, offline-first todo app with a Kanban board, drag-and-drop, and switchable views — your tasks, your device, no account required.
+
+**Try the live demo: [todoodoong.vercel.app](https://todoodoong.vercel.app)**
 
 All data is stored locally in your browser (`localStorage`). No backend, no tracking, works offline as an installable PWA.
 

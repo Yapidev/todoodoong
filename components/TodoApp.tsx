@@ -75,6 +75,10 @@ export default function TodoApp() {
   const [editStatus, setEditStatus] = useState<Status>("todo");
   const [editDueDate, setEditDueDate] = useState("");
   const [editPriority, setEditPriority] = useState<"none" | Priority>("none");
+  const [confirmDelete, setConfirmDelete] = useState<{
+    message: string;
+    confirm: () => void;
+  } | null>(null);
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") return;
@@ -84,16 +88,17 @@ export default function TodoApp() {
   }, []);
 
   useEffect(() => {
-    if (!isModalOpen && editingId === null) return;
+    if (!isModalOpen && editingId === null && confirmDelete === null) return;
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setIsModalOpen(false);
         setEditingId(null);
+        setConfirmDelete(null);
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isModalOpen, editingId]);
+  }, [isModalOpen, editingId, confirmDelete]);
 
   function addTodo(e: React.FormEvent) {
     e.preventDefault();
@@ -126,7 +131,8 @@ export default function TodoApp() {
   function saveEdit(id: string) {
     const text = editText.trim();
     if (!text) {
-      deleteTodo(id);
+      setEditingId(null);
+      requestDeleteTodo(id);
     } else {
       updateTodos((prev) =>
         updateTodoInList(prev, id, {
@@ -136,8 +142,8 @@ export default function TodoApp() {
           priority: editPriority === "none" ? undefined : editPriority,
         })
       );
+      setEditingId(null);
     }
-    setEditingId(null);
   }
 
   function moveTodo(id: string, status: Status, beforeId?: string) {
@@ -152,12 +158,26 @@ export default function TodoApp() {
     updateTodos((prev) => toggleDoneInList(prev, id));
   }
 
-  function deleteTodo(id: string) {
-    updateTodos((prev) => deleteTodoFromList(prev, id));
+  function requestDeleteTodo(id: string) {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+    setConfirmDelete({
+      message: `"${todo.text}" akan dihapus permanen.`,
+      confirm: () => {
+        updateTodos((prev) => deleteTodoFromList(prev, id));
+        setConfirmDelete(null);
+      },
+    });
   }
 
-  function clearDone() {
-    updateTodos(clearDoneFromList);
+  function requestClearDone() {
+    setConfirmDelete({
+      message: `${doneCount} tugas selesai akan dihapus permanen.`,
+      confirm: () => {
+        updateTodos(clearDoneFromList);
+        setConfirmDelete(null);
+      },
+    });
   }
 
   function handleExport() {
@@ -264,7 +284,7 @@ export default function TodoApp() {
           </label>
           {doneCount > 0 && (
             <button
-              onClick={clearDone}
+              onClick={requestClearDone}
               className="text-sm text-neutral-500 underline-offset-4 transition hover:text-red-500 hover:underline dark:text-neutral-400"
             >
               Hapus selesai ({doneCount})
@@ -304,16 +324,16 @@ export default function TodoApp() {
         <KanbanBoard
           todos={filtered}
           onEdit={startEdit}
-          onDelete={deleteTodo}
+          onDelete={requestDeleteTodo}
           onMove={moveTodo}
           onReorder={reorderTodo}
         />
       )}
       {view === "table" && (
-        <TodoTable todos={filtered} onEdit={startEdit} onDelete={deleteTodo} />
+        <TodoTable todos={filtered} onEdit={startEdit} onDelete={requestDeleteTodo} />
       )}
       {view === "list" && (
-        <TodoListView todos={filtered} onEdit={startEdit} onDelete={deleteTodo} />
+        <TodoListView todos={filtered} onEdit={startEdit} onDelete={requestDeleteTodo} />
       )}
       {view === "checklist" && (
         <TodoChecklist todos={filtered} onToggle={toggleDone} onEdit={startEdit} />
@@ -334,6 +354,28 @@ export default function TodoApp() {
         <p className="mt-6 text-xs text-neutral-400 dark:text-neutral-500">
           {activeCount} tugas aktif dari {todos.length} total
         </p>
+      )}
+
+      {confirmDelete && (
+        <TodoModal title="Hapus Tugas?" onClose={() => setConfirmDelete(null)}>
+          <p className="mb-5 text-sm text-neutral-600 dark:text-neutral-300">
+            {confirmDelete.message}
+          </p>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => setConfirmDelete(null)}
+              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            >
+              Batal
+            </button>
+            <button
+              onClick={confirmDelete.confirm}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+            >
+              Hapus
+            </button>
+          </div>
+        </TodoModal>
       )}
 
       {isModalOpen && (
