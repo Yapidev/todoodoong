@@ -26,6 +26,7 @@ import {
   matchesQuery,
   moveTodoInList,
   reorderTodoInList,
+  setStatusInPlace,
   sortTodos,
   toggleDoneInList,
   toggleSubtaskInList,
@@ -122,7 +123,7 @@ export default function TodoApp() {
 
 
   function setTodoStatus(id: string, status: Status) {
-    updateTodos((prev) => moveTodoInList(prev, id, status));
+    updateTodos((prev) => setStatusInPlace(prev, id, status));
   }
 
   function moveTodo(id: string, status: Status, beforeId?: string) {

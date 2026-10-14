@@ -204,6 +204,16 @@ export function moveTodoInList(
   ];
 }
 
+export function setStatusInPlace(
+  prev: Todo[],
+  id: string,
+  status: Status
+): Todo[] {
+  const moved = prev.find((t) => t.id === id);
+  if (!moved || moved.status === status) return prev;
+  return prev.map((t) => (t.id === id ? { ...t, status } : t));
+}
+
 export function reorderTodoInList(
   prev: Todo[],
   activeId: string,

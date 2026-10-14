@@ -8,6 +8,7 @@ import {
   moveTodoInList,
   normalizeTodo,
   reorderTodoInList,
+  setStatusInPlace,
   toggleDoneInList,
   updateTodoInList,
 } from "../components/todo-logic";
@@ -109,6 +110,25 @@ describe("moveTodoInList", () => {
     ];
     expect(moveTodoInList(list, "zzz", "done")).toBe(list);
     expect(moveTodoInList(list, "a", "todo")).toBe(list);
+  });
+});
+
+describe("setStatusInPlace", () => {
+  it("mengubah status tanpa memindahkan posisi dalam list", () => {
+    const list = [
+      make({ id: "a", status: "todo" }),
+      make({ id: "b", status: "todo" }),
+      make({ id: "c", status: "done" }),
+    ];
+    const next = setStatusInPlace(list, "b", "doing");
+    expect(next.map((t) => t.id)).toEqual(["a", "b", "c"]);
+    expect(next.find((t) => t.id === "b")?.status).toBe("doing");
+  });
+
+  it("tidak berubah bila kartu tidak ada atau status sama", () => {
+    const list = [make({ id: "a", status: "todo" })];
+    expect(setStatusInPlace(list, "zzz", "done")).toBe(list);
+    expect(setStatusInPlace(list, "a", "todo")).toBe(list);
   });
 });
 
