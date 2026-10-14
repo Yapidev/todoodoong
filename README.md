@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Todo Kanban
+
+A free, offline-first todo app with a Kanban board, drag-and-drop, and switchable views — your tasks, your device, no account required.
+
+All data is stored locally in your browser (`localStorage`). No backend, no tracking, works offline as an installable PWA.
+
+<!-- TODO: add a screenshot here, e.g. docs/screenshot.png -->
+<!-- ![Todo Kanban screenshot](docs/screenshot.png) -->
+
+## Features
+
+- **Kanban board** — three columns (Not Started / In Progress / Done) with drag-and-drop powered by [dnd-kit](https://dndkit.com/). Works with mouse, touch, and keyboard.
+- **Reordering** — rearrange cards within a column, or drop them at an exact position in another column.
+- **Multiple views** — switch between Kanban, Table, List, and Checklist; the choice is remembered.
+- **Due dates & priorities** — optional per-task; overdue dates are highlighted.
+- **Search & status filter** — quickly narrow down what you are looking for.
+- **Light/dark theme** — manual toggle, follows system preference by default.
+- **Import/export** — back up or migrate your tasks as JSON.
+- **PWA** — install it on your phone or desktop and keep working offline.
+- **Automatic migration** — older localStorage formats are upgraded on load.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20 or newer
+- npm
+
+### Install & Run
 
 ```bash
+git clone https://github.com/<your-username>/todo-app.git
+cd todo-app
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command             | Description                       |
+| ------------------- | --------------------------------- |
+| `npm run dev`       | Start the dev server              |
+| `npm run build`     | Create a production build         |
+| `npm run start`     | Serve the production build        |
+| `npm run lint`      | Run ESLint                        |
+| `npm run typecheck` | Run TypeScript checks             |
+| `npm test`          | Run unit tests (Vitest)           |
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js](https://nextjs.org) (App Router) + React 19
+- [Tailwind CSS](https://tailwindcss.com) v4
+- [dnd-kit](https://dndkit.com/) for drag-and-drop
+- [Vitest](https://vitest.dev) for unit tests
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/                # Next.js App Router (layout, page, styles)
+components/         # UI components, stores, and pure logic
+  todo-types.ts     # Types & constants
+  todo-logic.ts     # Pure functions (move, reorder, normalize, ...)
+  todo-store.ts     # localStorage-backed store (useSyncExternalStore)
+  prefs.ts          # Theme & view preferences
+tests/              # Unit tests for todo-logic
+public/             # PWA manifest, icon, service worker
+```
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+[MIT](LICENSE)
