@@ -51,7 +51,10 @@ function CardBody({
         {todo.text}
       </p>
       <TodoMeta todo={todo} />
-      <div className="mt-1 flex flex-wrap items-center gap-3">
+      <div
+        className="mt-1 flex flex-wrap items-center gap-3"
+        onPointerDownCapture={(e) => e.stopPropagation()}
+      >
         <button
           onClick={() => onEdit(todo)}
           aria-label="Edit tugas"
