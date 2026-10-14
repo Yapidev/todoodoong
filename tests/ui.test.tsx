@@ -40,6 +40,9 @@ describe("TodoApp alur inti", () => {
     );
     expect(screen.getByText("Belanja")).toBeInTheDocument();
     expect(store.get("todo-app.todos")).toContain("Belanja");
+    expect(
+      screen.queryByRole("button", { name: "Simpan" })
+    ).not.toBeInTheDocument();
   });
 
   it("menghapus tugas dengan konfirmasi lalu mengurungkannya", async () => {
