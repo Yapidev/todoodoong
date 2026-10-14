@@ -21,6 +21,7 @@ import {
   addTodoToList,
   clearDoneFromList,
   deleteTodoFromList,
+  generateId,
   matchesQuery,
   moveTodoInList,
   reorderTodoInList,
@@ -114,7 +115,7 @@ export default function TodoApp() {
     const text = input.trim();
     if (!text) return;
     const todo: Todo = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       text,
       status: newStatus,
       createdAt: Date.now(),
