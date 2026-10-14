@@ -94,7 +94,7 @@ function Column({
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
   return (
-    <section className="flex min-w-[240px] flex-1 flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-800 dark:bg-neutral-950/50">
+    <section className="flex w-[85vw] max-w-[320px] shrink-0 snap-start flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-3 sm:w-auto sm:max-w-none sm:flex-1 dark:border-neutral-800 dark:bg-neutral-950/50">
       <header className="mb-3 flex items-center gap-2">
         <span className={`h-2 w-2 shrink-0 rounded-full ${column.dot}`} />
         <h2 className="text-sm font-semibold">{column.label}</h2>
@@ -191,7 +191,7 @@ export default function KanbanBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveId(null)}
     >
-      <div className="flex w-full flex-1 gap-4 overflow-x-auto pb-4">
+      <div className="flex w-full flex-1 gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
         {STATUSES.map((status) => (
           <Column
             key={status}

@@ -195,8 +195,8 @@ export default function TodoApp() {
   const isFiltering = search.trim() !== "" || statusFilter !== "all";
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center px-4 py-12">
-      <h1 className="mb-2 text-4xl font-bold tracking-tight">Todo Kanban</h1>
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center px-4 py-8 sm:py-12">
+      <h1 className="mb-2 text-3xl font-bold tracking-tight sm:text-4xl">Todo Kanban</h1>
       <p className="mb-8 text-sm text-neutral-500 dark:text-neutral-400">
         Catat tugas, atur urutan, pilih tampilan sesuai kebutuhanmu.
       </p>
@@ -204,17 +204,17 @@ export default function TodoApp() {
       <div className="mb-4 flex w-full flex-wrap items-center gap-3">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
+          className="w-full rounded-lg bg-neutral-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-700 sm:w-auto sm:py-2.5 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
         >
           + Tambah Tugas
         </button>
 
-        <div className="flex gap-1 rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
+        <div className="flex max-w-full gap-1 overflow-x-auto rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
           {VIEWS.map((v) => (
             <button
               key={v.key}
               onClick={() => setView(v.key)}
-              className={`rounded-md px-3 py-1.5 text-sm transition ${
+              className={`whitespace-nowrap rounded-md px-3 py-2 text-sm transition sm:py-1.5 ${
                 view === v.key
                   ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
                   : "hover:bg-neutral-100 dark:hover:bg-neutral-800"
@@ -246,7 +246,7 @@ export default function TodoApp() {
           )}
         </button>
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
           <button
             onClick={handleExport}
             className="text-sm text-neutral-500 underline-offset-4 transition hover:text-neutral-900 hover:underline dark:text-neutral-400 dark:hover:text-neutral-100"
@@ -279,15 +279,15 @@ export default function TodoApp() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari tugas..."
-          className="w-full max-w-xs rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
+          className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm outline-none transition focus:border-neutral-900 sm:max-w-xs dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
         />
         {view !== "kanban" && (
-          <div className="flex gap-1 rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
+          <div className="flex max-w-full gap-1 overflow-x-auto rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
             {STATUS_FILTERS.map((f) => (
               <button
                 key={f.key}
                 onClick={() => setStatusFilter(f.key)}
-                className={`rounded-md px-3 py-1 text-sm transition ${
+                className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm transition ${
                   statusFilter === f.key
                     ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
                     : "hover:bg-neutral-100 dark:hover:bg-neutral-800"
