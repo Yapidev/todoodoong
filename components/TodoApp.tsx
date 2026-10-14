@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import KanbanBoard from "./KanbanBoard";
 import Toast from "./Toast";
+import UpdatePrompt from "./UpdatePrompt";
 import { AddTodoForm, EditTodoForm } from "./TodoForm";
 import TodoChecklist from "./TodoChecklist";
 import TodoListView from "./TodoListView";
@@ -11,24 +12,31 @@ import TodoTable from "./TodoTable";
 import {
   STATUSES,
   statusLabel,
+  type SortKey,
   type Status,
   type StatusFilter,
   type Todo,
   type View,
 } from "./todo-types";
 import {
+  addSubtaskToList,
   clearDoneFromList,
+  deleteSubtaskFromList,
   deleteTodoFromList,
   matchesQuery,
   moveTodoInList,
   reorderTodoInList,
+  setStatusInPlace,
+  sortTodos,
   toggleDoneInList,
+  toggleSubtaskInList,
 } from "./todo-logic";
 import {
   exportTodos,
   getServerTodos,
   getTodos,
   importTodos,
+  subscribeStorageError,
   subscribeTodos,
   updateTodos,
 } from "./todo-store";
@@ -55,6 +63,20 @@ const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
   ...STATUSES.map((s) => ({ key: s as StatusFilter, label: statusLabel(s) })),
 ];
 
+const SORTS: { key: SortKey; label: string }[] = [
+  { key: "newest", label: "Terbaru" },
+  { key: "created", label: "Terlama" },
+  { key: "priority", label: "Prioritas" },
+  { key: "due", label: "Tenggat" },
+];
+
+const EMPTY_HINTS: Record<View, string> = {
+  kanban: "Belum ada tugas. Tambahkan tugas pertamamu, lalu tarik kartu antar kolom!",
+  table: "Belum ada tugas untuk ditampilkan dalam tabel.",
+  list: "Belum ada tugas untuk ditampilkan dalam daftar.",
+  checklist: "Belum ada tugas. Cocokkan tugas sehari-harimu di sini.",
+};
+
 export default function TodoApp() {
   const todos = useSyncExternalStore(subscribeTodos, getTodos, getServerTodos);
   const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
@@ -62,27 +84,28 @@ export default function TodoApp() {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("newest");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{
     message: string;
     confirm: () => void;
   } | null>(null);
-  const [toast, setToast] = useState<{ id: number; message: string } | null>(
-    null
-  );
+  const [toast, setToast] = useState<{
+    id: number;
+    message: string;
+    action?: React.ReactNode;
+  } | null>(null);
 
-  function showToast(message: string) {
+  function showToast(message: string, action?: React.ReactNode) {
     const id = Date.now();
-    setToast({ id, message });
-    setTimeout(() => setToast((t) => (t && t.id === id ? null : t)), 3000);
+    setToast({ id, message, action });
+    setTimeout(() => setToast((t) => (t && t.id === id ? null : t)), 5000);
   }
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") return;
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
-    }
+    return subscribeStorageError((message) => showToast(message));
   }, []);
 
   useEffect(() => {
@@ -99,6 +122,10 @@ export default function TodoApp() {
   }, [isModalOpen, editingTodo, confirmDelete]);
 
 
+  function setTodoStatus(id: string, status: Status) {
+    updateTodos((prev) => setStatusInPlace(prev, id, status));
+  }
+
   function moveTodo(id: string, status: Status, beforeId?: string) {
     updateTodos((prev) => moveTodoInList(prev, id, status, beforeId));
   }
@@ -111,26 +138,58 @@ export default function TodoApp() {
     updateTodos((prev) => toggleDoneInList(prev, id));
   }
 
+  function addSubtask(todoId: string, text: string) {
+    updateTodos((prev) => addSubtaskToList(prev, todoId, text));
+  }
+
+  function toggleSubtask(todoId: string, subtaskId: string) {
+    updateTodos((prev) => toggleSubtaskInList(prev, todoId, subtaskId));
+  }
+
+  function deleteSubtask(todoId: string, subtaskId: string) {
+    updateTodos((prev) => deleteSubtaskFromList(prev, todoId, subtaskId));
+  }
+
+  function undoRestore(snapshot: Todo[]) {
+    updateTodos(() => snapshot);
+  }
+
   function requestDeleteTodo(id: string) {
     const todo = todos.find((t) => t.id === id);
     if (!todo) return;
     setConfirmDelete({
       message: `"${todo.text}" akan dihapus permanen.`,
       confirm: () => {
+        const snapshot = todos;
         updateTodos((prev) => deleteTodoFromList(prev, id));
         setConfirmDelete(null);
-        showToast("Tugas dihapus");
+        showToast("Tugas dihapus", renderUndo(snapshot));
       },
     });
+  }
+
+  function renderUndo(snapshot: Todo[]) {
+    return (
+      <button
+        onClick={() => {
+          undoRestore(snapshot);
+          setToast(null);
+        }}
+        className="shrink-0 text-xs font-medium text-neutral-700 underline underline-offset-2 dark:text-neutral-200"
+      >
+        Urungkan
+      </button>
+    );
   }
 
   function requestClearDone() {
     setConfirmDelete({
       message: `${doneCount} tugas selesai akan dihapus permanen.`,
       confirm: () => {
+        const snapshot = todos;
         updateTodos(clearDoneFromList);
         setConfirmDelete(null);
-        showToast(`${doneCount} tugas selesai dihapus`);
+        showToast(`${doneCount} tugas selesai dihapus`, renderUndo(snapshot));
       },
     });
   }
@@ -164,10 +223,13 @@ export default function TodoApp() {
     reader.readAsText(file);
   }
 
-  const filtered = todos.filter(
-    (t) =>
-      matchesQuery(t, search) &&
-      (view === "kanban" || statusFilter === "all" || t.status === statusFilter)
+  const filtered = sortTodos(
+    todos.filter(
+      (t) =>
+        matchesQuery(t, search) &&
+        (view === "kanban" || statusFilter === "all" || t.status === statusFilter)
+    ),
+    sortKey
   );
   const doneCount = todos.filter((t) => t.status === "done").length;
   const activeCount = todos.length - doneCount;
@@ -277,6 +339,30 @@ export default function TodoApp() {
             ))}
           </div>
         )}
+        {view !== "kanban" && (
+          <label className="ml-auto flex shrink-0 items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+            <svg
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="h-3.5 w-3.5"
+              aria-hidden="true"
+            >
+              <path d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Z" />
+            </svg>
+            <select
+              value={sortKey}
+              onChange={(e) => setSortKey(e.target.value as SortKey)}
+              aria-label="Urutkan tugas"
+              className="cursor-pointer rounded-lg border border-neutral-300 bg-white px-2 py-1.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
+            >
+              {SORTS.map((o) => (
+                <option key={o.key} value={o.key}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
 
       {view === "kanban" && (
@@ -295,12 +381,23 @@ export default function TodoApp() {
         <TodoListView todos={filtered} onEdit={setEditingTodo} onDelete={requestDeleteTodo} />
       )}
       {view === "checklist" && (
-        <TodoChecklist todos={filtered} onToggle={toggleDone} onEdit={setEditingTodo} />
+        <TodoChecklist
+          todos={filtered}
+          onToggle={toggleDone}
+          onEdit={setEditingTodo}
+          onDelete={requestDeleteTodo}
+          onStatusChange={setTodoStatus}
+          expandedId={expandedId}
+          onExpand={(id) => setExpandedId((cur) => (cur === id ? null : id))}
+          onSubtaskAdd={addSubtask}
+          onSubtaskToggle={toggleSubtask}
+          onSubtaskDelete={deleteSubtask}
+        />
       )}
 
       {todos.length === 0 && (
-        <p className="mt-8 text-sm text-neutral-400 dark:text-neutral-500">
-          Belum ada tugas. Tambahkan tugas pertamamu!
+        <p className="mt-8 text-center text-sm text-neutral-400 dark:text-neutral-500">
+          {EMPTY_HINTS[view]}
         </p>
       )}
       {todos.length > 0 && filtered.length === 0 && isFiltering && (
@@ -315,7 +412,14 @@ export default function TodoApp() {
         </p>
       )}
 
-      {toast && <Toast message={toast.message} onClose={() => setToast(null)} />}
+      {toast && (
+        <Toast
+          message={toast.message}
+          action={toast.action}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <UpdatePrompt />
 
       {confirmDelete && (
         <TodoModal title="Hapus Tugas?" onClose={() => setConfirmDelete(null)}>

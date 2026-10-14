@@ -154,6 +154,7 @@ export function AddTodoForm({
     };
     updateTodos((prev) => addTodoToList(prev, todo));
     onAdded("Tugas ditambahkan");
+    onClose();
   }
 
   return (

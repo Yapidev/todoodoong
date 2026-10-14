@@ -19,7 +19,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { COLUMNS, STATUSES, type Status, type Todo } from "./todo-types";
+import {
+  COLUMNS,
+  STATUSES,
+  type Status,
+  type Todo,
+} from "./todo-types";
 import TodoMeta from "./TodoMeta";
 
 function CardBody({
@@ -32,7 +37,7 @@ function CardBody({
   onDelete: (id: string) => void;
 }) {
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="item-in rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
       <p
         className={`text-sm select-none ${
           todo.status === "done"
@@ -43,7 +48,10 @@ function CardBody({
         {todo.text}
       </p>
       <TodoMeta todo={todo} />
-      <div className="mt-1 flex gap-3">
+      <div
+        className="mt-1 flex flex-wrap items-center gap-3"
+        onPointerDownCapture={(e) => e.stopPropagation()}
+      >
         <button
           onClick={() => onEdit(todo)}
           aria-label="Edit tugas"
