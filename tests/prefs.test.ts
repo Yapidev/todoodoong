@@ -18,6 +18,7 @@ function stubWindow({
 }: { prefersDark?: boolean } = {}) {
   vi.stubGlobal("window", {
     matchMedia: (q: string) => ({ matches: q.includes("dark") && prefersDark }),
+    addEventListener: () => {},
   });
 }
 

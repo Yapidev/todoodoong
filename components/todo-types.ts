@@ -2,6 +2,12 @@ export type Status = "todo" | "doing" | "done";
 
 export type Priority = "low" | "medium" | "high";
 
+export type Subtask = {
+  id: string;
+  text: string;
+  done: boolean;
+};
+
 export type Todo = {
   id: string;
   text: string;
@@ -9,7 +15,10 @@ export type Todo = {
   createdAt: number;
   dueDate?: string;
   priority?: Priority;
+  subtasks?: Subtask[];
 };
+
+export type SortKey = "newest" | "priority" | "due" | "created";
 
 export type View = "kanban" | "table" | "list" | "checklist";
 
