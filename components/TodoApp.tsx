@@ -201,6 +201,7 @@ export default function TodoApp() {
     a.download = `todoodoong-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast(`${todos.length} tugas diekspor`);
   }
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
@@ -210,7 +211,10 @@ export default function TodoApp() {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        importTodos(String(reader.result));
+        const added = importTodos(String(reader.result));
+        showToast(
+          added > 0 ? `${added} tugas diimpor` : "Tidak ada tugas baru untuk diimpor"
+        );
       } catch {
         window.alert("Gagal mengimpor: format file tidak dikenali.");
       }
