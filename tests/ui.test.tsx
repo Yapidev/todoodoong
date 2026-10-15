@@ -92,7 +92,7 @@ describe("TodoApp alur inti", () => {
     const user = userEvent.setup();
     await renderApp();
 
-    await user.type(screen.getByPlaceholderText("Cari tugas..."), "belanja");
+    await user.type(screen.getByPlaceholderText(/Cari tugas/), "belanja");
     expect(screen.getByText("Belanja")).toBeInTheDocument();
     expect(screen.queryByText("Olahraga")).not.toBeInTheDocument();
   });
@@ -191,7 +191,7 @@ describe("Shortcut keyboard", () => {
 
     await user.keyboard("/");
     expect(document.activeElement).toBe(
-      screen.getByPlaceholderText("Cari tugas...")
+      screen.getByPlaceholderText(/Cari tugas/)
     );
   });
 

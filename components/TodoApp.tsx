@@ -277,10 +277,13 @@ export default function TodoApp() {
           className="w-full rounded-lg bg-neutral-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-700 sm:w-auto sm:py-2.5 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
         >
           + Tambah Tugas
+          <kbd aria-hidden="true" className="ml-2 hidden rounded border border-neutral-300 px-1.5 py-0.5 text-[10px] font-normal text-neutral-500 sm:inline dark:border-neutral-700 dark:text-neutral-400">
+            N
+          </kbd>
         </button>
 
         <div className="flex max-w-full gap-1 overflow-x-auto rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
-          {VIEWS.map((v) => (
+          {VIEWS.map((v, i) => (
             <button
               key={v.key}
               onClick={() => setView(v.key)}
@@ -291,6 +294,9 @@ export default function TodoApp() {
               }`}
             >
               {v.label}
+              <kbd aria-hidden="true" className="ml-1 hidden rounded border border-neutral-300 px-1 text-[10px] font-normal text-neutral-400 sm:inline dark:border-neutral-700 dark:text-neutral-500">
+                {i + 1}
+              </kbd>
             </button>
           ))}
         </div>
@@ -349,7 +355,7 @@ export default function TodoApp() {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Cari tugas..."
+          placeholder="Cari tugas... (tekan /)"
           className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm outline-none transition focus:border-neutral-900 sm:max-w-xs dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
         />
         {view !== "kanban" && (
