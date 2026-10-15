@@ -32,12 +32,12 @@ export default function TodoTable({
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950/50 dark:text-neutral-400">
-            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950/50">Tugas</th>
-            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950/50">Status</th>
-            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950/50">Tenggat</th>
-            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950/50">Prioritas</th>
-            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950/50">Dibuat</th>
-            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 text-right font-medium dark:bg-neutral-950/50">Aksi</th>
+            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Tugas</th>
+            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Status</th>
+            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Tenggat</th>
+            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Prioritas</th>
+            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Dibuat</th>
+            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 text-right font-medium dark:bg-neutral-950">Aksi</th>
           </tr>
         </thead>
         <tbody>
