@@ -50,16 +50,32 @@ function CardBody({
   const hasSubtasks = (todo.subtasks?.length ?? 0) > 0;
 
   return (
-    <div className="item-in rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
-      <p
-        className={`text-sm select-none ${
-          todo.status === "done"
-            ? "text-neutral-400 line-through dark:text-neutral-600"
-            : ""
-        }`}
-      >
-        {todo.text}
-      </p>
+    <div className="item-in group rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
+      <div className="flex items-start gap-2">
+        <p
+          className={`flex-1 text-sm select-none ${
+            todo.status === "done"
+              ? "text-neutral-400 line-through dark:text-neutral-600"
+              : ""
+          }`}
+        >
+          {todo.text}
+        </p>
+        <span
+          aria-hidden="true"
+          title="Tarik untuk memindahkan / mengurutkan"
+          className="mt-0.5 shrink-0 cursor-grab text-neutral-300 transition group-hover:text-neutral-400 dark:text-neutral-700 dark:group-hover:text-neutral-500"
+        >
+          <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+            <circle cx="7.5" cy="4.5" r="1.3" />
+            <circle cx="12.5" cy="4.5" r="1.3" />
+            <circle cx="7.5" cy="10" r="1.3" />
+            <circle cx="12.5" cy="10" r="1.3" />
+            <circle cx="7.5" cy="15.5" r="1.3" />
+            <circle cx="12.5" cy="15.5" r="1.3" />
+          </svg>
+        </span>
+      </div>
       <TodoMeta todo={todo} />
       <div
         className="mt-1 flex flex-wrap items-center gap-3"
