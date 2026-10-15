@@ -236,7 +236,7 @@ export default function TodoApp() {
   const isFiltering = search.trim() !== "" || statusFilter !== "all";
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center px-4 py-8 sm:py-12">
+    <main className="mx-auto flex h-dvh w-full max-w-5xl flex-col items-center px-4 py-6 sm:py-8">
       <h1 className="mb-2 text-3xl font-bold tracking-tight sm:text-4xl">Todoodoong</h1>
       <p className="mb-8 text-sm text-neutral-500 dark:text-neutral-400">
         Catat tugas, atur urutan, pilih tampilan sesuai kebutuhanmu.
@@ -365,6 +365,7 @@ export default function TodoApp() {
         )}
       </div>
 
+      <div className="flex min-h-0 w-full flex-1 flex-col">
       {view === "kanban" && (
         <KanbanBoard
           todos={filtered}
@@ -395,6 +396,7 @@ export default function TodoApp() {
         />
       )}
 
+      </div>
       {todos.length === 0 && (
         <p className="mt-8 text-center text-sm text-neutral-400 dark:text-neutral-500">
           {EMPTY_HINTS[view]}

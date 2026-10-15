@@ -26,7 +26,7 @@ export default function TodoChecklist({
   onSubtaskDelete: (todoId: string, subtaskId: string) => void;
 }) {
   return (
-    <ul className="w-full space-y-2">
+    <ul className="h-full w-full space-y-2 overflow-y-auto pr-1">
       {todos.map((todo) => {
         const expanded = expandedId === todo.id;
         return (

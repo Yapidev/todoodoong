@@ -25,6 +25,33 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(115 115 115 / 0.35) transparent;
+}
+
+.dark * {
+  scrollbar-color: rgb(212 212 212 / 0.25) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgb(115 115 115 / 0.35);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(212 212 212 / 0.25);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   @keyframes toast-in {
     from {
