@@ -1,5 +1,5 @@
 import StatusBadge from "./StatusBadge";
-import { isOverdue } from "./todo-logic";
+import { isOverdue, subtaskProgress } from "./todo-logic";
 import { priorityDot, priorityLabel, type Todo } from "./todo-types";
 
 function formatDate(timestamp: number): string {
@@ -36,6 +36,7 @@ export default function TodoTable({
             <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Status</th>
             <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Tenggat</th>
             <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Prioritas</th>
+            <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Subtugas</th>
             <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 font-medium dark:bg-neutral-950">Dibuat</th>
             <th className="sticky top-0 z-10 bg-neutral-50 px-4 py-3 text-right font-medium dark:bg-neutral-950">Aksi</th>
           </tr>
@@ -77,6 +78,32 @@ export default function TodoTable({
                     />
                     {priorityLabel(todo.priority)}
                   </span>
+                ) : (
+                  "-"
+                )}
+              </td>
+              <td className="whitespace-nowrap px-4 py-3 text-neutral-500 dark:text-neutral-400">
+                {todo.subtasks?.length ? (
+                  (() => {
+                    const { done, total } = subtaskProgress(todo);
+                    return (
+                      <span
+                        className={`inline-flex items-center gap-1.5 ${
+                          done === total ? "text-green-600 dark:text-green-400" : ""
+                        }`}
+                      >
+                        <svg
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className="h-3.5 w-3.5"
+                          aria-hidden="true"
+                        >
+                          <path d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Z" />
+                        </svg>
+                        {done}/{total}
+                      </span>
+                    );
+                  })()
                 ) : (
                   "-"
                 )}
