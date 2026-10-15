@@ -204,7 +204,7 @@ function Column({
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
   return (
-    <section className="flex w-[85vw] max-w-[320px] shrink-0 snap-start flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-3 min-h-0 sm:w-auto sm:max-w-none sm:flex-1 dark:border-neutral-800 dark:bg-neutral-950/50">
+    <section className="flex w-[85vw] max-w-[320px] shrink-0 snap-start flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-3 sm:w-auto sm:max-w-none sm:flex-1 dark:border-neutral-800 dark:bg-neutral-950/50">
       <header className="mb-3 flex items-center gap-2">
         <span className={`h-2 w-2 shrink-0 rounded-full ${column.dot}`} />
         <h2 className="text-sm font-semibold">{column.label}</h2>
@@ -214,7 +214,7 @@ function Column({
       </header>
       <div
         ref={setNodeRef}
-        className={`flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-lg p-1 transition ${
+        className={`flex flex-1 flex-col gap-2 rounded-lg p-1 transition ${
           isOver
             ? "bg-neutral-200/60 ring-2 ring-neutral-400 dark:bg-neutral-800/40 dark:ring-neutral-600"
             : ""
@@ -313,7 +313,7 @@ export default function KanbanBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveId(null)}
     >
-      <div className="flex w-full min-h-0 flex-1 gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+      <div className="flex w-full min-h-0 flex-1 gap-4 overflow-auto pb-4 snap-x snap-mandatory">
         {STATUSES.map((status) => (
           <Column
             key={status}
