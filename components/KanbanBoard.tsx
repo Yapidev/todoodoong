@@ -84,14 +84,14 @@ function CardBody({
         <button
           onClick={() => onEdit(todo)}
           aria-label="Edit tugas"
-          className="text-xs text-neutral-300 transition hover:text-neutral-900 dark:text-neutral-600 dark:hover:text-neutral-100"
+          className="text-xs text-neutral-400 transition hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100"
         >
           Edit
         </button>
         <button
           onClick={() => onDelete(todo.id)}
           aria-label="Hapus tugas"
-          className="text-xs text-neutral-300 transition hover:text-red-500 dark:text-neutral-600 dark:hover:text-red-400"
+          className="text-xs text-neutral-400 transition hover:text-red-500 dark:text-neutral-500 dark:hover:text-red-400"
         >
           Hapus
         </button>
@@ -100,7 +100,7 @@ function CardBody({
             onClick={() => onExpand(todo.id)}
             aria-label={expanded ? "Tutup subtugas" : "Buka subtugas"}
             title={expanded ? "Tutup subtugas" : "Buka subtugas"}
-            className="text-xs text-neutral-300 transition hover:text-neutral-900 dark:text-neutral-600 dark:hover:text-neutral-100"
+            className="text-xs text-neutral-400 transition hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100"
           >
             <svg
               viewBox="0 0 20 20"
@@ -179,6 +179,31 @@ function SortableCard({
   );
 }
 
+function QuickAdd({ onAdd }: { onAdd: (text: string) => void }) {
+  const [text, setText] = useState("");
+
+  function submit() {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    onAdd(trimmed);
+    setText("");
+  }
+
+  return (
+    <input
+      type="text"
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") submit();
+      }}
+      placeholder="+ Tambah tugas"
+      aria-label="Tambah tugas di kolom ini"
+      className="mt-2 w-full rounded-lg border border-dashed border-neutral-300 bg-transparent px-2 py-1.5 text-xs text-neutral-600 outline-none transition placeholder:text-neutral-400 focus:border-solid focus:border-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:placeholder:text-neutral-500 dark:focus:border-neutral-400"
+    />
+  );
+}
+
 function Column({
   status,
   todos,
@@ -186,6 +211,7 @@ function Column({
   onDelete,
   expandedId,
   onExpand,
+  onQuickAdd,
   onSubtaskAdd,
   onSubtaskToggle,
   onSubtaskDelete,
@@ -196,6 +222,7 @@ function Column({
   onDelete: (id: string) => void;
   expandedId: string | null;
   onExpand: (id: string) => void;
+  onQuickAdd: (status: Status, text: string) => void;
   onSubtaskAdd: (todoId: string, text: string) => void;
   onSubtaskToggle: (todoId: string, subtaskId: string) => void;
   onSubtaskDelete: (todoId: string, subtaskId: string) => void;
@@ -244,6 +271,7 @@ function Column({
           </p>
         )}
       </div>
+      <QuickAdd onAdd={(text) => onQuickAdd(status, text)} />
     </section>
   );
 }
@@ -254,6 +282,7 @@ export default function KanbanBoard({
   onDelete,
   onMove,
   onReorder,
+  onQuickAdd,
   onSubtaskAdd,
   onSubtaskToggle,
   onSubtaskDelete,
@@ -263,6 +292,7 @@ export default function KanbanBoard({
   onDelete: (id: string) => void;
   onMove: (id: string, status: Status, beforeId?: string) => void;
   onReorder: (activeId: string, overId: string) => void;
+  onQuickAdd: (status: Status, text: string) => void;
   onSubtaskAdd: (todoId: string, text: string) => void;
   onSubtaskToggle: (todoId: string, subtaskId: string) => void;
   onSubtaskDelete: (todoId: string, subtaskId: string) => void;
@@ -325,6 +355,7 @@ export default function KanbanBoard({
             onExpand={(id) =>
               setExpandedId((cur) => (cur === id ? null : id))
             }
+            onQuickAdd={onQuickAdd}
             onSubtaskAdd={onSubtaskAdd}
             onSubtaskToggle={onSubtaskToggle}
             onSubtaskDelete={onSubtaskDelete}

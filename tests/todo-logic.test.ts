@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  addTodoToColumnEnd,
   addTodoToList,
   clearDoneFromList,
   deleteTodoFromList,
@@ -8,6 +9,7 @@ import {
   moveTodoInList,
   normalizeTodo,
   reorderTodoInList,
+  relativeDueLabel,
   setStatusInPlace,
   toggleDoneInList,
   updateTodoInList,
@@ -208,5 +210,38 @@ describe("pencarian dan tenggat", () => {
     expect(isOverdue(pastDone)).toBe(false);
     expect(isOverdue(future)).toBe(false);
     expect(isOverdue(make())).toBe(false);
+  });
+});
+
+describe("tambah cepat & label tenggat", () => {
+  it("addTodoToColumnEnd menambah di dasar kolom", () => {
+    const list = [
+      make({ id: "a", status: "todo" }),
+      make({ id: "b", status: "done" }),
+      make({ id: "c", status: "todo" }),
+    ];
+    const t = make({ id: "new", status: "todo" });
+    expect(addTodoToColumnEnd(list, t).map((x) => x.id)).toEqual([
+      "a",
+      "b",
+      "c",
+      "new",
+    ]);
+  });
+
+  it("addTodoToColumnEnd menambah di depan bila kolom kosong", () => {
+    const list = [make({ id: "a", status: "done" })];
+    const t = make({ id: "new", status: "todo" });
+    expect(addTodoToColumnEnd(list, t).map((x) => x.id)).toEqual(["new", "a"]);
+  });
+
+  it("relativeDueLabel memberi label relatif", () => {
+    const today = new Date(2026, 9, 15);
+    expect(relativeDueLabel("2026-10-15", today)).toBe("Hari ini");
+    expect(relativeDueLabel("2026-10-16", today)).toBe("Besok");
+    expect(relativeDueLabel("2026-10-14", today)).toBe("Kemarin");
+    expect(relativeDueLabel("2026-10-13", today)).toBe("Terlambat 2 hari");
+    expect(relativeDueLabel("2026-10-20", today)).toBe("5 hari lagi");
+    expect(relativeDueLabel("2026-12-01", today)).toBeNull();
   });
 });

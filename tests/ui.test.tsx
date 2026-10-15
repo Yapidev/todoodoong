@@ -22,6 +22,7 @@ async function renderApp() {
 
 afterEach(() => {
   cleanup();
+  store.clear();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -203,5 +204,23 @@ describe("Shortcut keyboard", () => {
     expect(
       screen.getByRole("columnheader", { name: "Tugas" })
     ).toBeInTheDocument();
+  });
+});
+
+describe("Tambah cepat di kolom kanban", () => {
+  it("menambah tugas langsung ke kolom yang dituju", async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    const column = screen.getByText("Sedang Berjalan").closest("section")!;
+    const input = within(column).getByPlaceholderText("+ Tambah tugas");
+    await user.type(input, "Kirim proposal{Enter}");
+
+    expect(within(column).getByText("Kirim proposal")).toBeInTheDocument();
+    const stored = store.get("todo-app.todos")!;
+    expect(JSON.parse(stored)[0]).toMatchObject({
+      text: "Kirim proposal",
+      status: "doing",
+    });
   });
 });

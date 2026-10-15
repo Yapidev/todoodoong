@@ -20,10 +20,12 @@ import {
 } from "./todo-types";
 import {
   addSubtaskToList,
+  addTodoToColumnEnd,
   clearDoneFromList,
   deleteSubtaskFromList,
   deleteTodoFromList,
   matchesQuery,
+  generateId,
   moveTodoInList,
   reorderTodoInList,
   setStatusInPlace,
@@ -177,6 +179,17 @@ export default function TodoApp() {
 
   function deleteSubtask(todoId: string, subtaskId: string) {
     updateTodos((prev) => deleteSubtaskFromList(prev, todoId, subtaskId));
+  }
+
+  function quickAddTodo(status: Status, text: string) {
+    updateTodos((prev) =>
+      addTodoToColumnEnd(prev, {
+        id: generateId(),
+        text,
+        status,
+        createdAt: Date.now(),
+      })
+    );
   }
 
   function undoRestore(snapshot: Todo[]) {
@@ -409,6 +422,7 @@ export default function TodoApp() {
           onDelete={requestDeleteTodo}
           onMove={moveTodo}
           onReorder={reorderTodo}
+          onQuickAdd={quickAddTodo}
           onSubtaskAdd={addSubtask}
           onSubtaskToggle={toggleSubtask}
           onSubtaskDelete={deleteSubtask}

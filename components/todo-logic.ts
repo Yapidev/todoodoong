@@ -247,3 +247,40 @@ export function matchesQuery(todo: Todo, query: string): boolean {
   if (todo.text.toLowerCase().includes(q)) return true;
   return (todo.subtasks ?? []).some((st) => st.text.toLowerCase().includes(q));
 }
+
+export function addTodoToColumnEnd(prev: Todo[], todo: Todo): Todo[] {
+  let lastIdx = -1;
+  for (let i = prev.length - 1; i >= 0; i--) {
+    if (prev[i].status === todo.status) {
+      lastIdx = i;
+      break;
+    }
+  }
+  if (lastIdx === -1) return [todo, ...prev];
+  return [
+    ...prev.slice(0, lastIdx + 1),
+    todo,
+    ...prev.slice(lastIdx + 1),
+  ];
+}
+
+const DAY_MS = 86_400_000;
+
+export function relativeDueLabel(
+  dueDate: string,
+  today: Date = new Date()
+): string | null {
+  const due = new Date(`${dueDate}T00:00:00`).getTime();
+  const midnight = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  ).getTime();
+  const diff = Math.round((due - midnight) / DAY_MS);
+  if (diff === 0) return "Hari ini";
+  if (diff === 1) return "Besok";
+  if (diff === -1) return "Kemarin";
+  if (diff < -1) return `Terlambat ${-diff} hari`;
+  if (diff <= 7) return `${diff} hari lagi`;
+  return null;
+}

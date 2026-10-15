@@ -1,5 +1,5 @@
 import StatusBadge from "./StatusBadge";
-import { isOverdue, subtaskProgress } from "./todo-logic";
+import { isOverdue, relativeDueLabel, subtaskProgress } from "./todo-logic";
 import { priorityDot, priorityLabel, type Todo } from "./todo-types";
 
 function formatDate(timestamp: number): string {
@@ -68,7 +68,9 @@ export default function TodoTable({
                     : "text-neutral-500 dark:text-neutral-400"
                 }`}
               >
-                {todo.dueDate ? formatDue(todo.dueDate) : "-"}
+                {todo.dueDate
+                  ? (relativeDueLabel(todo.dueDate) ?? formatDue(todo.dueDate))
+                  : "-"}
               </td>
               <td className="whitespace-nowrap px-4 py-3 text-neutral-500 dark:text-neutral-400">
                 {todo.priority ? (

@@ -1,4 +1,4 @@
-import { isOverdue, subtaskProgress } from "./todo-logic";
+import { isOverdue, relativeDueLabel, subtaskProgress } from "./todo-logic";
 import { priorityDot, priorityLabel, type Todo } from "./todo-types";
 
 function formatDue(dueDate: string): string {
@@ -46,7 +46,7 @@ export default function TodoMeta({ todo }: { todo: Todo }) {
               clipRule="evenodd"
             />
           </svg>
-          {formatDue(todo.dueDate)}
+          {relativeDueLabel(todo.dueDate) ?? formatDue(todo.dueDate)}
         </span>
       )}
     </span>

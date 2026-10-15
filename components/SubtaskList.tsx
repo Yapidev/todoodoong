@@ -48,7 +48,7 @@ export default function SubtaskList({
             <button
               onClick={() => onDeleteSubtask(todo.id, st.id)}
               aria-label="Hapus subtugas"
-              className="text-xs text-neutral-300 transition hover:text-red-500 dark:text-neutral-600 dark:hover:text-red-400"
+              className="text-xs text-neutral-400 transition hover:text-red-500 dark:text-neutral-500 dark:hover:text-red-400"
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3">
                 <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />

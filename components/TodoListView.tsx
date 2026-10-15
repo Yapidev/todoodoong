@@ -37,7 +37,7 @@ export default function TodoListView({
             <button
               onClick={() => onDelete(todo.id)}
               aria-label="Hapus tugas"
-              className="shrink-0 text-neutral-300 transition hover:text-red-500 dark:text-neutral-600 dark:hover:text-red-400"
+              className="shrink-0 text-neutral-400 transition hover:text-red-500 dark:text-neutral-500 dark:hover:text-red-400"
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                 <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />

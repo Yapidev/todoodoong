@@ -71,7 +71,7 @@ export default function TodoChecklist({
               <button
                 onClick={() => onExpand(todo.id)}
                 aria-label={expanded ? "Tutup subtugas" : "Buka subtugas"}
-                className="shrink-0 text-neutral-300 transition hover:text-neutral-900 dark:text-neutral-600 dark:hover:text-neutral-100"
+                className="shrink-0 text-neutral-400 transition hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100"
               >
                 <svg
                   viewBox="0 0 20 20"
@@ -95,7 +95,7 @@ export default function TodoChecklist({
               <button
                 onClick={() => onDelete(todo.id)}
                 aria-label="Hapus tugas"
-                className="shrink-0 rounded-md p-1.5 text-neutral-300 transition hover:bg-red-50 hover:text-red-500 dark:text-neutral-600 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+                className="shrink-0 rounded-md p-1.5 text-neutral-400 transition hover:bg-red-50 hover:text-red-500 dark:text-neutral-500 dark:hover:bg-red-950/40 dark:hover:text-red-400"
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                   <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
