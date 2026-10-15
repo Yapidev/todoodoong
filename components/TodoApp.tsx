@@ -60,6 +60,40 @@ const VIEWS: { key: View; label: string }[] = [
   { key: "checklist", label: "Checkbox" },
 ];
 
+const VIEW_ICONS: Record<View, React.ReactNode> = {
+  kanban: (
+    <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+      <rect x="3" y="3" width="4" height="14" rx="1.5" />
+      <rect x="8" y="3" width="4" height="9" rx="1.5" />
+      <rect x="13" y="3" width="4" height="6" rx="1.5" />
+    </svg>
+  ),
+  table: (
+    <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+      <rect x="3" y="3" width="6" height="6" rx="1.5" />
+      <rect x="11" y="3" width="6" height="6" rx="1.5" />
+      <rect x="3" y="11" width="6" height="6" rx="1.5" />
+      <rect x="11" y="11" width="6" height="6" rx="1.5" />
+    </svg>
+  ),
+  list: (
+    <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+      <rect x="3" y="4" width="14" height="2.5" rx="1.25" />
+      <rect x="3" y="8.75" width="14" height="2.5" rx="1.25" />
+      <rect x="3" y="13.5" width="14" height="2.5" rx="1.25" />
+    </svg>
+  ),
+  checklist: (
+    <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M5.25 3A2.25 2.25 0 0 0 3 5.25v9.5A2.25 2.25 0 0 0 5.25 17h9.5A2.25 2.25 0 0 0 17 14.75v-9.5A2.25 2.25 0 0 0 14.75 3h-9.5Zm8.53 4.28a.75.75 0 0 0-1.06-1.06L9.25 9.69 7.53 7.97a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.06 0l4-4Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  ),
+};
+
 const STATUS_FILTERS: { key: StatusFilter; label: string }[] = [
   { key: "all", label: "Semua" },
   ...STATUSES.map((s) => ({ key: s as StatusFilter, label: statusLabel(s) })),
@@ -278,7 +312,7 @@ export default function TodoApp() {
   const isFiltering = search.trim() !== "" || statusFilter !== "all";
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center px-4 py-6 sm:py-8">
+    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center px-4 pb-24 pt-6 sm:pb-8 sm:pt-8">
       <h1 className="mb-2 text-3xl font-bold tracking-tight sm:text-4xl">Todoodoong</h1>
       <p className="mb-8 text-sm text-neutral-500 dark:text-neutral-400">
         Catat tugas, atur urutan, pilih tampilan sesuai kebutuhanmu.
@@ -295,7 +329,7 @@ export default function TodoApp() {
           </kbd>
         </button>
 
-        <div className="flex max-w-full gap-1 overflow-x-auto rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
+        <div className="hidden max-w-full gap-1 overflow-x-auto rounded-lg border border-neutral-200 p-1 dark:border-neutral-800 sm:flex">
           {VIEWS.map((v, i) => (
             <button
               key={v.key}
@@ -516,6 +550,28 @@ export default function TodoApp() {
           onEmptyText={(id) => requestDeleteTodo(id)}
         />
       )}
+      <nav
+        aria-label="Pilih tampilan"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-neutral-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden dark:border-neutral-800 dark:bg-neutral-950/95"
+      >
+        <div className="mx-auto flex max-w-5xl px-2">
+          {VIEWS.map((v) => (
+            <button
+              key={v.key}
+              onClick={() => setView(v.key)}
+              aria-current={view === v.key ? "page" : undefined}
+              className={`flex flex-1 flex-col items-center gap-1 py-2 text-[10px] font-medium transition ${
+                view === v.key
+                  ? "text-neutral-900 dark:text-neutral-100"
+                  : "text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-300"
+              }`}
+            >
+              {VIEW_ICONS[v.key]}
+              {v.label}
+            </button>
+          ))}
+        </div>
+      </nav>
     </main>
   );
 }

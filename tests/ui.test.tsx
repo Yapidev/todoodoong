@@ -168,7 +168,7 @@ describe("Urutan tampilan", () => {
     const user = userEvent.setup();
     await renderApp();
 
-    await user.click(screen.getByRole("button", { name: "Tabel" }));
+    await user.click(screen.getAllByRole("button", { name: "Tabel" })[0]);
     const first = screen.getByText("Tugas baru");
     const second = screen.getByText("Tugas lama");
     expect(
@@ -222,5 +222,19 @@ describe("Tambah cepat di kolom kanban", () => {
       text: "Kirim proposal",
       status: "doing",
     });
+  });
+});
+
+describe("Navigasi bawah di mobile", () => {
+  it("berpindah view lewat nav bawah", async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    const nav = screen.getByRole("navigation", { name: "Pilih tampilan" });
+    await user.click(within(nav).getByRole("button", { name: "Tabel" }));
+
+    expect(
+      screen.getByRole("columnheader", { name: "Tugas" })
+    ).toBeInTheDocument();
   });
 });
