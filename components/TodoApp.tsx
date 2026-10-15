@@ -223,14 +223,14 @@ export default function TodoApp() {
     reader.readAsText(file);
   }
 
-  const filtered = sortTodos(
-    todos.filter(
-      (t) =>
-        matchesQuery(t, search) &&
-        (view === "kanban" || statusFilter === "all" || t.status === statusFilter)
-    ),
-    sortKey
+  const visible = todos.filter(
+    (t) =>
+      matchesQuery(t, search) &&
+      (view === "kanban" || statusFilter === "all" || t.status === statusFilter)
   );
+  // Urutan manual hasil drag di kanban harus dipertahankan;
+  // sorting hanya berlaku untuk view tabel, list, dan checklist.
+  const filtered = view === "kanban" ? visible : sortTodos(visible, sortKey);
   const doneCount = todos.filter((t) => t.status === "done").length;
   const activeCount = todos.length - doneCount;
   const isFiltering = search.trim() !== "" || statusFilter !== "all";

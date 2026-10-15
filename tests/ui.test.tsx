@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 const store = new Map<string, string>();
@@ -134,5 +134,44 @@ describe("Subtugas di kartu kanban", () => {
       expect(screen.getAllByText("1/3").length).toBeGreaterThan(0)
     );
     expect(store.get("todo-app.todos")).toContain("Catat meteran");
+  });
+});
+
+describe("Urutan tampilan", () => {
+  it("menjaga urutan manual di kanban (tidak di-sort ulang)", async () => {
+    store.set(
+      "todo-app.todos",
+      JSON.stringify([
+        { id: "old", text: "Tugas lama", status: "todo", createdAt: 1 },
+        { id: "new", text: "Tugas baru", status: "todo", createdAt: 2 },
+      ])
+    );
+    await renderApp();
+
+    const column = screen.getByText("Belum Mulai").closest("section")!;
+    const first = within(column).getByText("Tugas lama");
+    const second = within(column).getByText("Tugas baru");
+    expect(
+      first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
+  it("tetap mengurutkan terbaru dulu di view tabel", async () => {
+    store.set(
+      "todo-app.todos",
+      JSON.stringify([
+        { id: "old", text: "Tugas lama", status: "todo", createdAt: 1 },
+        { id: "new", text: "Tugas baru", status: "todo", createdAt: 2 },
+      ])
+    );
+    const user = userEvent.setup();
+    await renderApp();
+
+    await user.click(screen.getByRole("button", { name: "Tabel" }));
+    const first = screen.getByText("Tugas baru");
+    const second = screen.getByText("Tugas lama");
+    expect(
+      first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
   });
 });
