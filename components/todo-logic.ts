@@ -244,5 +244,6 @@ export function isOverdue(todo: Todo): boolean {
 export function matchesQuery(todo: Todo, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  return todo.text.toLowerCase().includes(q);
+  if (todo.text.toLowerCase().includes(q)) return true;
+  return (todo.subtasks ?? []).some((st) => st.text.toLowerCase().includes(q));
 }

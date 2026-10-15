@@ -191,6 +191,15 @@ describe("pencarian dan tenggat", () => {
     expect(matchesQuery(t, "")).toBe(true);
   });
 
+  it("matchesQuery mencocokkan teks subtugas", () => {
+    const t = {
+      ...make({ text: "Pindahan rumah" }),
+      subtasks: [{ id: "s1", text: "Sewa truk", done: false }],
+    };
+    expect(matchesQuery(t, "sewa truk")).toBe(true);
+    expect(matchesQuery(t, "kemas")).toBe(false);
+  });
+
   it("isOverdue hanya untuk tenggat lewat dan belum selesai", () => {
     const past = make({ dueDate: "2020-01-01" });
     const pastDone = make({ dueDate: "2020-01-01", status: "done" });
