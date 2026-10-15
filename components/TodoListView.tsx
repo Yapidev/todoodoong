@@ -12,7 +12,7 @@ export default function TodoListView({
   onDelete: (id: string) => void;
 }) {
   return (
-    <ul className="h-full w-full space-y-2 overflow-y-auto pr-1">
+    <ul className="w-full space-y-2 pr-1">
       {todos.map((todo) => {
         const dot = COLUMNS.find((c) => c.key === todo.status)?.dot;
         return (

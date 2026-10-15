@@ -28,7 +28,7 @@ export default function TodoTable({
   onDelete: (id: string) => void;
 }) {
   return (
-    <div className="h-full w-full overflow-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
+    <div className="w-full overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-neutral-200 bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950/50 dark:text-neutral-400">

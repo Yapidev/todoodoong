@@ -313,7 +313,7 @@ export default function KanbanBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveId(null)}
     >
-      <div className="flex w-full min-h-0 flex-1 gap-4 overflow-auto pb-4 snap-x snap-mandatory">
+      <div className="flex w-full min-h-[60vh] gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
         {STATUSES.map((status) => (
           <Column
             key={status}
