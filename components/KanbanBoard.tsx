@@ -25,17 +25,30 @@ import {
   type Status,
   type Todo,
 } from "./todo-types";
+import SubtaskList from "./SubtaskList";
 import TodoMeta from "./TodoMeta";
 
 function CardBody({
   todo,
   onEdit,
   onDelete,
+  expanded = false,
+  onExpand,
+  onSubtaskAdd,
+  onSubtaskToggle,
+  onSubtaskDelete,
 }: {
   todo: Todo;
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
+  expanded?: boolean;
+  onExpand?: (id: string) => void;
+  onSubtaskAdd?: (todoId: string, text: string) => void;
+  onSubtaskToggle?: (todoId: string, subtaskId: string) => void;
+  onSubtaskDelete?: (todoId: string, subtaskId: string) => void;
 }) {
+  const hasSubtasks = (todo.subtasks?.length ?? 0) > 0;
+
   return (
     <div className="item-in rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
       <p
@@ -66,7 +79,40 @@ function CardBody({
         >
           Hapus
         </button>
+        {hasSubtasks && onExpand && (
+          <button
+            onClick={() => onExpand(todo.id)}
+            aria-label={expanded ? "Tutup subtugas" : "Buka subtugas"}
+            title={expanded ? "Tutup subtugas" : "Buka subtugas"}
+            className="text-xs text-neutral-300 transition hover:text-neutral-900 dark:text-neutral-600 dark:hover:text-neutral-100"
+          >
+            <svg
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className={`h-3 w-3 transition ${expanded ? "rotate-90" : ""}`}
+            >
+              <path
+                fillRule="evenodd"
+                d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        )}
       </div>
+      {expanded && onSubtaskAdd && onSubtaskToggle && onSubtaskDelete && (
+        <div
+          onPointerDownCapture={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <SubtaskList
+            todo={todo}
+            onAddSubtask={onSubtaskAdd}
+            onToggleSubtask={onSubtaskToggle}
+            onDeleteSubtask={onSubtaskDelete}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -75,10 +121,20 @@ function SortableCard({
   todo,
   onEdit,
   onDelete,
+  expanded,
+  onExpand,
+  onSubtaskAdd,
+  onSubtaskToggle,
+  onSubtaskDelete,
 }: {
   todo: Todo;
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
+  expanded: boolean;
+  onExpand: (id: string) => void;
+  onSubtaskAdd: (todoId: string, text: string) => void;
+  onSubtaskToggle: (todoId: string, subtaskId: string) => void;
+  onSubtaskDelete: (todoId: string, subtaskId: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: todo.id });
@@ -93,7 +149,16 @@ function SortableCard({
       title="Klik dua kali untuk edit, tarik untuk pindah / mengurutkan"
       className={`cursor-grab touch-none ${isDragging ? "opacity-40" : ""}`}
     >
-      <CardBody todo={todo} onEdit={onEdit} onDelete={onDelete} />
+      <CardBody
+        todo={todo}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        expanded={expanded}
+        onExpand={onExpand}
+        onSubtaskAdd={onSubtaskAdd}
+        onSubtaskToggle={onSubtaskToggle}
+        onSubtaskDelete={onSubtaskDelete}
+      />
     </div>
   );
 }
@@ -103,11 +168,21 @@ function Column({
   todos,
   onEdit,
   onDelete,
+  expandedId,
+  onExpand,
+  onSubtaskAdd,
+  onSubtaskToggle,
+  onSubtaskDelete,
 }: {
   status: Status;
   todos: Todo[];
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
+  expandedId: string | null;
+  onExpand: (id: string) => void;
+  onSubtaskAdd: (todoId: string, text: string) => void;
+  onSubtaskToggle: (todoId: string, subtaskId: string) => void;
+  onSubtaskDelete: (todoId: string, subtaskId: string) => void;
 }) {
   const column = COLUMNS.find((c) => c.key === status)!;
   const { setNodeRef, isOver } = useDroppable({ id: status });
@@ -139,6 +214,11 @@ function Column({
               todo={todo}
               onEdit={onEdit}
               onDelete={onDelete}
+              expanded={expandedId === todo.id}
+              onExpand={onExpand}
+              onSubtaskAdd={onSubtaskAdd}
+              onSubtaskToggle={onSubtaskToggle}
+              onSubtaskDelete={onSubtaskDelete}
             />
           ))}
         </SortableContext>
@@ -158,14 +238,21 @@ export default function KanbanBoard({
   onDelete,
   onMove,
   onReorder,
+  onSubtaskAdd,
+  onSubtaskToggle,
+  onSubtaskDelete,
 }: {
   todos: Todo[];
   onEdit: (todo: Todo) => void;
   onDelete: (id: string) => void;
   onMove: (id: string, status: Status, beforeId?: string) => void;
   onReorder: (activeId: string, overId: string) => void;
+  onSubtaskAdd: (todoId: string, text: string) => void;
+  onSubtaskToggle: (todoId: string, subtaskId: string) => void;
+  onSubtaskDelete: (todoId: string, subtaskId: string) => void;
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -218,13 +305,24 @@ export default function KanbanBoard({
             todos={todos.filter((t) => t.status === status)}
             onEdit={onEdit}
             onDelete={onDelete}
+            expandedId={expandedId}
+            onExpand={(id) =>
+              setExpandedId((cur) => (cur === id ? null : id))
+            }
+            onSubtaskAdd={onSubtaskAdd}
+            onSubtaskToggle={onSubtaskToggle}
+            onSubtaskDelete={onSubtaskDelete}
           />
         ))}
       </div>
       <DragOverlay>
         {activeTodo ? (
           <div className="cursor-grabbing rotate-2">
-            <CardBody todo={activeTodo} onEdit={onEdit} onDelete={onDelete} />
+            <CardBody
+              todo={activeTodo}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           </div>
         ) : null}
       </DragOverlay>

@@ -97,3 +97,42 @@ describe("TodoApp alur inti", () => {
     expect(screen.queryByText("Olahraga")).not.toBeInTheDocument();
   });
 });
+
+describe("Subtugas di kartu kanban", () => {
+  it("menampilkan progres, expand, dan menambah subtugas", async () => {
+    store.set(
+      "todo-app.todos",
+      JSON.stringify([
+        {
+          id: "a",
+          text: "Pindahan rumah",
+          status: "todo",
+          createdAt: 1,
+          subtasks: [
+            { id: "s1", text: "Kemas dapur", done: true },
+            { id: "s2", text: "Sewa truk", done: false },
+          ],
+        },
+      ])
+    );
+    const user = userEvent.setup();
+    await renderApp();
+
+    expect(screen.getAllByText("1/2").length).toBeGreaterThan(0);
+
+    await user.click(screen.getByRole("button", { name: "Buka subtugas" }));
+    expect(screen.getByText("Kemas dapur")).toBeInTheDocument();
+    expect(screen.getByText("Sewa truk")).toBeInTheDocument();
+
+    await user.type(
+      screen.getByPlaceholderText("Tambah subtugas..."),
+      "Catat meteran"
+    );
+    await user.click(screen.getByRole("button", { name: "Tambah subtugas" }));
+
+    await waitFor(() =>
+      expect(screen.getAllByText("1/3").length).toBeGreaterThan(0)
+    );
+    expect(store.get("todo-app.todos")).toContain("Catat meteran");
+  });
+});

@@ -1,4 +1,4 @@
-import { isOverdue } from "./todo-logic";
+import { isOverdue, subtaskProgress } from "./todo-logic";
 import { priorityDot, priorityLabel, type Todo } from "./todo-types";
 
 function formatDue(dueDate: string): string {
@@ -10,9 +10,19 @@ function formatDue(dueDate: string): string {
 }
 
 export default function TodoMeta({ todo }: { todo: Todo }) {
-  if (!todo.dueDate && !todo.priority) return null;
+  const hasSubtasks = (todo.subtasks?.length ?? 0) > 0;
+  if (!todo.dueDate && !todo.priority && !hasSubtasks) return null;
+  const progress = subtaskProgress(todo);
   return (
     <span className="mt-1.5 flex flex-wrap items-center gap-3 text-xs">
+      {hasSubtasks && (
+        <span className="inline-flex items-center gap-1 text-neutral-500 dark:text-neutral-400">
+          <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+            <path d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Z" />
+          </svg>
+          {progress.done}/{progress.total}
+        </span>
+      )}
       {todo.priority && (
         <span className="inline-flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
           <span

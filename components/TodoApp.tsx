@@ -373,6 +373,9 @@ export default function TodoApp() {
           onDelete={requestDeleteTodo}
           onMove={moveTodo}
           onReorder={reorderTodo}
+          onSubtaskAdd={addSubtask}
+          onSubtaskToggle={toggleSubtask}
+          onSubtaskDelete={deleteSubtask}
         />
       )}
       {view === "table" && (
