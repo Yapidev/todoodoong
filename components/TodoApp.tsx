@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import KanbanBoard from "./KanbanBoard";
 import Toast from "./Toast";
 import UpdatePrompt from "./UpdatePrompt";
@@ -83,6 +83,7 @@ export default function TodoApp() {
   const view = useSyncExternalStore(subscribeView, getView, getServerView);
 
   const [search, setSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("newest");
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -115,6 +116,34 @@ export default function TodoApp() {
         setIsModalOpen(false);
         setEditingTodo(null);
         setConfirmDelete(null);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isModalOpen, editingTodo, confirmDelete]);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isModalOpen || editingTodo !== null || confirmDelete !== null) return;
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      )
+        return;
+      if (e.key === "n") {
+        e.preventDefault();
+        setIsModalOpen(true);
+      } else if (e.key === "/") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      } else if (e.key >= "1" && e.key <= "4") {
+        const next = VIEWS[Number(e.key) - 1];
+        if (next) setView(next.key);
       }
     }
     window.addEventListener("keydown", onKeyDown);
@@ -316,6 +345,7 @@ export default function TodoApp() {
 
       <div className="mb-6 flex w-full flex-wrap items-center gap-3">
         <input
+          ref={searchRef}
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}

@@ -175,3 +175,33 @@ describe("Urutan tampilan", () => {
     ).toBeTruthy();
   });
 });
+
+describe("Shortcut keyboard", () => {
+  it("n membuka form tambah tugas", async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    await user.keyboard("n");
+    expect(screen.getByPlaceholderText("Tugas baru...")).toBeInTheDocument();
+  });
+
+  it("slash memfokuskan kolom pencarian", async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    await user.keyboard("/");
+    expect(document.activeElement).toBe(
+      screen.getByPlaceholderText("Cari tugas...")
+    );
+  });
+
+  it("angka mengganti view", async () => {
+    const user = userEvent.setup();
+    await renderApp();
+
+    await user.keyboard("2");
+    expect(
+      screen.getByRole("columnheader", { name: "Tugas" })
+    ).toBeInTheDocument();
+  });
+});
