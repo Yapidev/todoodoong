@@ -6,6 +6,7 @@ import {
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
+  useDndContext,
   useDroppable,
   useSensor,
   useSensors,
@@ -229,6 +230,14 @@ function Column({
 }) {
   const column = COLUMNS.find((c) => c.key === status)!;
   const { setNodeRef, isOver } = useDroppable({ id: status });
+  const { active, over } = useDndContext();
+  const activeId = active ? String(active.id) : null;
+  const overId = over ? String(over.id) : null;
+  const overCardInThisColumn = todos.some((t) => t.id === overId);
+  const draggingFromOtherColumn =
+    activeId !== null && !todos.some((t) => t.id === activeId);
+  const showDropHint =
+    isOver || (overCardInThisColumn && draggingFromOtherColumn);
 
   return (
     <section className="flex w-[85vw] max-w-[320px] shrink-0 snap-start flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-3 sm:w-auto sm:max-w-none sm:flex-1 dark:border-neutral-800 dark:bg-neutral-950/50">
@@ -242,7 +251,7 @@ function Column({
       <div
         ref={setNodeRef}
         className={`flex flex-1 flex-col gap-2 rounded-lg p-1 transition ${
-          isOver
+          showDropHint
             ? "bg-neutral-200/60 ring-2 ring-neutral-400 dark:bg-neutral-800/40 dark:ring-neutral-600"
             : ""
         }`}
