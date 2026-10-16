@@ -10,8 +10,7 @@ A free, offline-first todo app with a Kanban board, drag-and-drop, and switchabl
 
 All data is stored locally in your browser (`localStorage`). No backend, no tracking, works offline as an installable PWA.
 
-<!-- TODO: add a screenshot here, e.g. docs/screenshot.png -->
-<!-- ![Todoodoong screenshot](docs/screenshot.png) -->
+![Todoodoong screenshot](public/screenshot.png)
 
 ## Features
 
