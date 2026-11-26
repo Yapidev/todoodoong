@@ -69,7 +69,7 @@ export function StatusIcon({
 export default function StatusBadge({ status }: { status: Status }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium backdrop-blur-sm ${BADGE_STYLES[status]}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${BADGE_STYLES[status]}`}
     >
       <StatusIcon status={status} className="h-3 w-3" />
       {statusLabel(status)}

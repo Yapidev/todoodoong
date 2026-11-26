@@ -37,14 +37,14 @@ export default function TodoTable({
     <div className="glass-panel w-full overflow-x-auto rounded-3xl lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-900/10 bg-white/45 text-left text-[11px] uppercase tracking-[0.07em] text-slate-600 dark:border-white/12 dark:bg-slate-950/35 dark:text-slate-300">
-            <th className="sticky top-0 z-10 min-w-[220px] px-4 py-3 font-semibold backdrop-blur-md">Tugas</th>
-            <th className="sticky top-0 z-10 whitespace-nowrap px-4 py-3 font-semibold backdrop-blur-md">Status</th>
-            <th className="sticky top-0 z-10 whitespace-nowrap px-4 py-3 font-semibold backdrop-blur-md">Tenggat</th>
-            <th className="sticky top-0 z-10 whitespace-nowrap px-4 py-3 font-semibold backdrop-blur-md">Prioritas</th>
-            <th className="sticky top-0 z-10 whitespace-nowrap px-4 py-3 font-semibold backdrop-blur-md">Subtugas</th>
-            <th className="sticky top-0 z-10 whitespace-nowrap px-4 py-3 font-semibold backdrop-blur-md">Dibuat</th>
-            <th className="sticky top-0 z-10 whitespace-nowrap px-4 py-3 text-right font-semibold backdrop-blur-md">Aksi</th>
+          <tr className="border-b border-slate-900/10 bg-white/75 text-left text-[11px] uppercase tracking-[0.07em] text-slate-600 dark:border-white/12 dark:bg-slate-900/80 dark:text-slate-300">
+            <th className="sticky top-0 z-10 min-w-[220px] bg-white/80 px-4 py-3 font-semibold dark:bg-slate-900/85">Tugas</th>
+            <th className="sticky top-0 z-10 whitespace-nowrap bg-white/80 px-4 py-3 font-semibold dark:bg-slate-900/85">Status</th>
+            <th className="sticky top-0 z-10 whitespace-nowrap bg-white/80 px-4 py-3 font-semibold dark:bg-slate-900/85">Tenggat</th>
+            <th className="sticky top-0 z-10 whitespace-nowrap bg-white/80 px-4 py-3 font-semibold dark:bg-slate-900/85">Prioritas</th>
+            <th className="sticky top-0 z-10 whitespace-nowrap bg-white/80 px-4 py-3 font-semibold dark:bg-slate-900/85">Subtugas</th>
+            <th className="sticky top-0 z-10 whitespace-nowrap bg-white/80 px-4 py-3 font-semibold dark:bg-slate-900/85">Dibuat</th>
+            <th className="sticky top-0 z-10 whitespace-nowrap bg-white/80 px-4 py-3 text-right font-semibold dark:bg-slate-900/85">Aksi</th>
           </tr>
         </thead>
         <tbody>

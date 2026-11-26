@@ -9,7 +9,7 @@ export default function TodoModal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 dark:bg-slate-950/60"
       onClick={onClose}
     >
       <div
