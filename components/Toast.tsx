@@ -15,7 +15,7 @@ export default function Toast({
       aria-live="polite"
       className="toast-in glass-pill fixed right-4 top-4 z-40 flex w-full max-w-xs items-center gap-3 rounded-2xl px-4 py-3"
     >
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-700 shadow-[0_0_12px_rgb(16_185_129/0.35)] dark:bg-emerald-400/20 dark:text-emerald-300">
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/18 text-emerald-700 dark:bg-emerald-400/20 dark:text-emerald-300">
         <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
           <path
             fillRule="evenodd"

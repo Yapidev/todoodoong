@@ -1,5 +1,11 @@
 import { isOverdue, relativeDueLabel, subtaskProgress } from "./todo-logic";
-import { priorityDot, priorityLabel, type Todo } from "./todo-types";
+import { priorityLabel, type Priority, type Todo } from "./todo-types";
+
+const PRIORITY_STYLES: Record<Priority, string> = {
+  low: "bg-sky-500/12 text-sky-700 dark:bg-sky-400/16 dark:text-sky-200",
+  medium: "bg-amber-500/14 text-amber-800 dark:bg-amber-400/18 dark:text-amber-200",
+  high: "bg-rose-500/14 text-rose-700 dark:bg-rose-400/18 dark:text-rose-200",
+};
 
 function formatDue(dueDate: string): string {
   return new Date(`${dueDate}T00:00:00`).toLocaleDateString("id-ID", {
@@ -24,10 +30,9 @@ export default function TodoMeta({ todo }: { todo: Todo }) {
         </span>
       )}
       {todo.priority && (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/6 px-2 py-0.5 font-medium text-slate-600 dark:bg-white/10 dark:text-slate-200">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${priorityDot(todo.priority)}`}
-          />
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${PRIORITY_STYLES[todo.priority]}`}
+        >
           {priorityLabel(todo.priority)}
         </span>
       )}

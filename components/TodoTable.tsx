@@ -1,6 +1,12 @@
 import StatusBadge from "./StatusBadge";
 import { isOverdue, relativeDueLabel, subtaskProgress } from "./todo-logic";
-import { priorityDot, priorityLabel, type Todo } from "./todo-types";
+import { priorityLabel, type Priority, type Todo } from "./todo-types";
+
+const PRIORITY_STYLES: Record<Priority, string> = {
+  low: "bg-sky-500/12 text-sky-700 dark:bg-sky-400/16 dark:text-sky-200",
+  medium: "bg-amber-500/14 text-amber-800 dark:bg-amber-400/18 dark:text-amber-200",
+  high: "bg-rose-500/14 text-rose-700 dark:bg-rose-400/18 dark:text-rose-200",
+};
 
 function formatDate(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString("id-ID", {
@@ -28,7 +34,7 @@ export default function TodoTable({
   onDelete: (id: string) => void;
 }) {
   return (
-    <div className="glass-panel w-full overflow-x-auto rounded-3xl">
+    <div className="glass-panel w-full overflow-x-auto rounded-3xl lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-slate-900/10 bg-white/45 text-left text-[11px] uppercase tracking-[0.07em] text-slate-600 dark:border-white/12 dark:bg-slate-950/35 dark:text-slate-300">
@@ -74,10 +80,9 @@ export default function TodoTable({
               </td>
               <td className="whitespace-nowrap px-4 py-3.5 text-slate-600 dark:text-slate-300">
                 {todo.priority ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <span
-                      className={`h-2 w-2 rounded-full ${priorityDot(todo.priority)}`}
-                    />
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_STYLES[todo.priority]}`}
+                  >
                     {priorityLabel(todo.priority)}
                   </span>
                 ) : (
