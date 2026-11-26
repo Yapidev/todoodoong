@@ -29,6 +29,12 @@ import {
 import SubtaskList from "./SubtaskList";
 import TodoMeta from "./TodoMeta";
 
+const DOT_GLOW: Record<Status, string> = {
+  todo: "bg-slate-400 shadow-[0_0_8px_rgb(148_163_184/0.75)] dark:bg-slate-300",
+  doing: "bg-amber-400 shadow-[0_0_10px_rgb(251_191_36/0.85)]",
+  done: "bg-emerald-400 shadow-[0_0_10px_rgb(52_211_153/0.85)]",
+};
+
 function CardBody({
   todo,
   onEdit,
@@ -51,13 +57,13 @@ function CardBody({
   const hasSubtasks = (todo.subtasks?.length ?? 0) > 0;
 
   return (
-    <div className="item-in group rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
+    <div className="item-in glass-card group rounded-2xl px-3.5 py-3 transition duration-200 hover:-translate-y-0.5">
       <div className="flex items-start gap-2">
         <p
-          className={`flex-1 text-sm select-none ${
+          className={`flex-1 text-[14px] font-medium leading-[1.45] tracking-[-0.01em] select-none ${
             todo.status === "done"
-              ? "text-neutral-400 line-through dark:text-neutral-600"
-              : ""
+              ? "text-slate-500 line-through dark:text-slate-400/75"
+              : "text-slate-900 dark:text-white"
           }`}
         >
           {todo.text}
@@ -65,7 +71,7 @@ function CardBody({
         <span
           aria-hidden="true"
           title="Tarik untuk memindahkan / mengurutkan"
-          className="mt-0.5 shrink-0 cursor-grab text-neutral-300 transition group-hover:text-neutral-400 dark:text-neutral-700 dark:group-hover:text-neutral-500"
+          className="mt-0.5 shrink-0 cursor-grab text-slate-400 transition group-hover:text-slate-600 dark:text-white/30 dark:group-hover:text-white/70"
         >
           <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
             <circle cx="7.5" cy="4.5" r="1.3" />
@@ -79,20 +85,20 @@ function CardBody({
       </div>
       <TodoMeta todo={todo} />
       <div
-        className="mt-1 flex flex-wrap items-center gap-3"
+        className="mt-2.5 flex flex-wrap items-center gap-1.5"
         onPointerDownCapture={(e) => e.stopPropagation()}
       >
         <button
           onClick={() => onEdit(todo)}
           aria-label="Edit tugas"
-          className="text-xs text-neutral-400 transition hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100"
+          className="rounded-full bg-slate-900/6 px-2.5 py-1 text-[11px] font-medium text-slate-700 transition hover:bg-slate-900/12 hover:text-slate-950 dark:bg-white/12 dark:text-white dark:hover:bg-white/22 dark:hover:text-white"
         >
           Edit
         </button>
         <button
           onClick={() => onDelete(todo.id)}
           aria-label="Hapus tugas"
-          className="text-xs text-neutral-400 transition hover:text-red-500 dark:text-neutral-500 dark:hover:text-red-400"
+          className="rounded-full bg-slate-900/6 px-2.5 py-1 text-[11px] font-medium text-slate-700 transition hover:bg-rose-500/15 hover:text-rose-700 dark:bg-white/12 dark:text-white dark:hover:bg-rose-500/25 dark:hover:text-rose-100"
         >
           Hapus
         </button>
@@ -101,12 +107,12 @@ function CardBody({
             onClick={() => onExpand(todo.id)}
             aria-label={expanded ? "Tutup subtugas" : "Buka subtugas"}
             title={expanded ? "Tutup subtugas" : "Buka subtugas"}
-            className="text-xs text-neutral-400 transition hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100"
+            className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-slate-900/6 text-slate-600 transition hover:bg-slate-900/12 hover:text-slate-950 dark:bg-white/12 dark:text-white dark:hover:bg-white/22 dark:hover:text-white"
           >
             <svg
               viewBox="0 0 20 20"
               fill="currentColor"
-              className={`h-3 w-3 transition ${expanded ? "rotate-90" : ""}`}
+              className={`h-3.5 w-3.5 transition ${expanded ? "rotate-90" : ""}`}
             >
               <path
                 fillRule="evenodd"
@@ -164,7 +170,7 @@ function SortableCard({
       {...attributes}
       onDoubleClick={() => onEdit(todo)}
       title="Klik dua kali untuk edit, tarik untuk pindah / mengurutkan"
-      className={`cursor-grab touch-none ${isDragging ? "opacity-40" : ""}`}
+      className={`cursor-grab touch-none ${isDragging ? "opacity-35" : ""}`}
     >
       <CardBody
         todo={todo}
@@ -200,7 +206,7 @@ function QuickAdd({ onAdd }: { onAdd: (text: string) => void }) {
       }}
       placeholder="+ Tambah tugas"
       aria-label="Tambah tugas di kolom ini"
-      className="mt-2 w-full rounded-lg border border-dashed border-neutral-300 bg-transparent px-2 py-1.5 text-xs text-neutral-600 outline-none transition placeholder:text-neutral-400 focus:border-solid focus:border-neutral-900 dark:border-neutral-700 dark:text-neutral-300 dark:placeholder:text-neutral-500 dark:focus:border-neutral-400"
+      className="mt-3 w-full rounded-xl border border-slate-900/10 bg-white/35 px-3 py-2 text-xs text-slate-800 outline-none transition placeholder:text-slate-500 focus:border-sky-500 focus:bg-white/75 focus:ring-2 focus:ring-sky-400/20 dark:border-white/12 dark:bg-white/6 dark:text-white dark:placeholder:text-slate-300/65 dark:focus:border-sky-400 dark:focus:bg-white/14"
     />
   );
 }
@@ -240,19 +246,25 @@ function Column({
     isOver || (overCardInThisColumn && draggingFromOtherColumn);
 
   return (
-    <section className="flex w-[85vw] max-w-[320px] shrink-0 snap-start flex-col rounded-xl border border-neutral-200 bg-neutral-50 p-3 sm:w-auto sm:max-w-none sm:flex-1 dark:border-neutral-800 dark:bg-neutral-950/50">
-      <header className="mb-3 flex items-center gap-2">
-        <span className={`h-2 w-2 shrink-0 rounded-full ${column.dot}`} />
-        <h2 className="text-sm font-semibold">{column.label}</h2>
-        <span className="ml-auto rounded-full bg-neutral-200 px-2 py-0.5 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+    <section
+      className={`flex w-[84vw] max-w-[330px] shrink-0 snap-start flex-col rounded-3xl p-3.5 sm:w-auto sm:max-w-none sm:flex-1 ${
+        status === "done" ? "glass-panel-deep" : "glass-panel"
+      }`}
+    >
+      <header className="mb-3 flex items-center gap-2.5 px-1">
+        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${DOT_GLOW[status]}`} />
+        <h2 className="text-[13px] font-semibold tracking-[-0.01em] text-slate-900 dark:text-white">
+          {column.label}
+        </h2>
+        <span className="ml-auto rounded-full bg-slate-900/8 px-2.5 py-0.5 text-[11px] font-semibold tabular-nums text-slate-700 dark:bg-white/14 dark:text-white">
           {todos.length}
         </span>
       </header>
       <div
         ref={setNodeRef}
-        className={`flex flex-1 flex-col gap-2 rounded-lg p-1 transition ${
+        className={`flex flex-1 flex-col gap-2.5 rounded-2xl p-1 transition ${
           showDropHint
-            ? "bg-neutral-200/60 ring-2 ring-neutral-400 dark:bg-neutral-800/40 dark:ring-neutral-600"
+            ? "bg-sky-400/15 ring-2 ring-sky-400/75 shadow-[inset_0_0_24px_rgb(56_189_248/0.18)]"
             : ""
         }`}
       >
@@ -275,9 +287,11 @@ function Column({
           ))}
         </SortableContext>
         {todos.length === 0 && (
-          <p className="py-6 text-center text-xs text-neutral-400 dark:text-neutral-500">
-            Tarik kartu ke sini
-          </p>
+          <div className="flex flex-1 items-center justify-center rounded-2xl bg-slate-900/[0.03] px-4 py-8 dark:bg-white/[0.03]">
+            <p className="text-center text-xs text-slate-500 dark:text-slate-300/65">
+              Tarik kartu ke sini
+            </p>
+          </div>
         )}
       </div>
       <QuickAdd onAdd={(text) => onQuickAdd(status, text)} />
@@ -352,7 +366,7 @@ export default function KanbanBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveId(null)}
     >
-      <div className="flex w-full min-h-[60vh] gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+      <div className="flex w-full min-h-[380px] gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
         {STATUSES.map((status) => (
           <Column
             key={status}
@@ -373,7 +387,7 @@ export default function KanbanBoard({
       </div>
       <DragOverlay>
         {activeTodo ? (
-          <div className="cursor-grabbing rotate-2">
+          <div className="cursor-grabbing rotate-1 scale-[1.03] drop-shadow-[0_22px_36px_rgb(15_23_42/0.45)]">
             <CardBody
               todo={activeTodo}
               onEdit={onEdit}

@@ -54,7 +54,7 @@ export default function UpdatePrompt() {
             });
             setDismissed(true);
           }}
-          className="shrink-0 text-xs font-medium text-neutral-700 underline underline-offset-2 dark:text-neutral-200"
+          className="shrink-0 rounded-full bg-sky-500/15 px-2.5 py-1 text-xs font-semibold text-sky-700 transition hover:bg-sky-500/25 dark:bg-sky-400/20 dark:text-sky-200 dark:hover:bg-sky-400/30"
         >
           Muat ulang
         </button>

@@ -26,15 +26,15 @@ export default function TodoChecklist({
   onSubtaskDelete: (todoId: string, subtaskId: string) => void;
 }) {
   return (
-    <ul className="w-full space-y-2 pr-1">
+    <ul className="w-full space-y-2.5">
       {todos.map((todo) => {
         const expanded = expandedId === todo.id;
         return (
           <li
             key={todo.id}
-            className="item-in rounded-lg border border-neutral-200 bg-white px-4 py-3 transition hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
+            className="item-in glass-card rounded-2xl px-4 py-3.5 transition duration-200 hover:-translate-y-0.5"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
               <input
                 type="checkbox"
                 checked={todo.status === "done"}
@@ -42,15 +42,15 @@ export default function TodoChecklist({
                 aria-label={
                   todo.status === "done" ? "Tandai belum selesai" : "Tandai selesai"
                 }
-                className="h-4 w-4 shrink-0 cursor-pointer accent-neutral-900 transition dark:accent-neutral-100"
+                className="h-4.5 w-4.5 shrink-0 cursor-pointer rounded accent-sky-500 transition dark:accent-sky-400"
               />
               <span
                 onDoubleClick={() => onEdit(todo)}
                 title="Klik dua kali untuk edit"
-                className={`flex-1 cursor-pointer text-sm select-none transition ${
+                className={`flex-1 cursor-pointer text-sm font-medium select-none transition ${
                   todo.status === "done"
-                    ? "text-neutral-400 line-through dark:text-neutral-600"
-                    : ""
+                    ? "text-slate-500 line-through dark:text-slate-400/70"
+                    : "text-slate-900 dark:text-white"
                 }`}
               >
                 {todo.text}
@@ -60,7 +60,7 @@ export default function TodoChecklist({
                 value={todo.status}
                 onChange={(e) => onStatusChange(todo.id, e.target.value as Status)}
                 aria-label="Ubah status"
-                className="shrink-0 cursor-pointer rounded-md border border-neutral-200 bg-white px-1.5 py-1 text-xs outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400"
+                className="glass-input shrink-0 cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium text-slate-800 outline-none transition dark:text-white"
               >
                 {STATUSES.map((s) => (
                   <option key={s} value={s}>
@@ -71,7 +71,7 @@ export default function TodoChecklist({
               <button
                 onClick={() => onExpand(todo.id)}
                 aria-label={expanded ? "Tutup subtugas" : "Buka subtugas"}
-                className="shrink-0 text-neutral-400 transition hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-900/6 text-slate-600 transition hover:bg-slate-900/12 hover:text-slate-950 dark:bg-white/12 dark:text-white dark:hover:bg-white/22 dark:hover:text-white"
               >
                 <svg
                   viewBox="0 0 20 20"
@@ -88,14 +88,14 @@ export default function TodoChecklist({
               <button
                 onClick={() => onEdit(todo)}
                 aria-label="Edit tugas"
-                className="shrink-0 rounded-md px-2 py-1 text-xs text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+                className="shrink-0 rounded-full bg-slate-900/6 px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-900/12 hover:text-slate-950 dark:bg-white/12 dark:text-white dark:hover:bg-white/22 dark:hover:text-white"
               >
                 Edit
               </button>
               <button
                 onClick={() => onDelete(todo.id)}
                 aria-label="Hapus tugas"
-                className="shrink-0 rounded-md p-1.5 text-neutral-400 transition hover:bg-red-50 hover:text-red-500 dark:text-neutral-500 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-900/6 text-slate-500 transition hover:bg-rose-500/15 hover:text-rose-600 dark:bg-white/12 dark:text-white dark:hover:bg-rose-500/25 dark:hover:text-rose-100"
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                   <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />

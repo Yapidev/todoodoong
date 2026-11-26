@@ -14,17 +14,17 @@ export default function TodoMeta({ todo }: { todo: Todo }) {
   if (!todo.dueDate && !todo.priority && !hasSubtasks) return null;
   const progress = subtaskProgress(todo);
   return (
-    <span className="mt-1.5 flex flex-wrap items-center gap-3 text-xs">
+    <span className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
       {hasSubtasks && (
-        <span className="inline-flex items-center gap-1 text-neutral-500 dark:text-neutral-400">
-          <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+        <span className="inline-flex items-center gap-1 rounded-full bg-slate-900/6 px-2 py-0.5 font-medium tabular-nums text-slate-600 dark:bg-white/10 dark:text-slate-200">
+          <svg viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3" aria-hidden="true">
             <path d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Z" />
           </svg>
           {progress.done}/{progress.total}
         </span>
       )}
       {todo.priority && (
-        <span className="inline-flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/6 px-2 py-0.5 font-medium text-slate-600 dark:bg-white/10 dark:text-slate-200">
           <span
             className={`h-1.5 w-1.5 rounded-full ${priorityDot(todo.priority)}`}
           />
@@ -33,13 +33,13 @@ export default function TodoMeta({ todo }: { todo: Todo }) {
       )}
       {todo.dueDate && (
         <span
-          className={`inline-flex items-center gap-1 ${
+          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${
             isOverdue(todo)
-              ? "font-medium text-red-500 dark:text-red-400"
-              : "text-neutral-500 dark:text-neutral-400"
+              ? "bg-rose-500/15 text-rose-700 dark:bg-rose-400/20 dark:text-rose-200"
+              : "bg-slate-900/6 text-slate-600 dark:bg-white/10 dark:text-slate-200"
           }`}
         >
-          <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+          <svg viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3" aria-hidden="true">
             <path
               fillRule="evenodd"
               d="M5.75 2a.75.75 0 0 1 .75.75v.75h7V2.75a.75.75 0 0 1 1.5 0v.75h.75A2.25 2.25 0 0 1 18 5.75v10.5A2.25 2.25 0 0 1 15.75 18.5H4.25A2.25 2.25 0 0 1 2 16.25V5.75A2.25 2.25 0 0 1 4.25 3.5h.75V2.75A.75.75 0 0 1 5.75 2Zm10 5.5H4.25v8.75a.25.25 0 0 0 .25.25h11.5a.25.25 0 0 0 .25-.25V7.5Z"

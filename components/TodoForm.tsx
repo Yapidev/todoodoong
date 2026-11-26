@@ -19,7 +19,7 @@ import { updateTodos } from "./todo-store";
 type PriorityChoice = "none" | Priority;
 
 const inputClass =
-  "w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-neutral-900 dark:border-neutral-700 dark:bg-neutral-950 dark:focus:border-neutral-400";
+  "glass-input w-full rounded-2xl px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-300/60";
 
 function TodoFormFields({
   text,
@@ -54,7 +54,7 @@ function TodoFormFields({
       />
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
+          <label className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300">
             Kolom
           </label>
           <select
@@ -70,7 +70,7 @@ function TodoFormFields({
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
+          <label className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300">
             Prioritas
           </label>
           <select
@@ -88,7 +88,7 @@ function TodoFormFields({
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-neutral-500 dark:text-neutral-400">
+        <label className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300">
           Tenggat (opsional)
         </label>
         <input
@@ -114,13 +114,13 @@ function FormActions({
       <button
         type="button"
         onClick={onCancel}
-        className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+        className="rounded-full border border-slate-900/15 bg-white/55 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-white/85 dark:border-white/20 dark:bg-white/14 dark:text-white dark:hover:bg-white/22"
       >
         Batal
       </button>
       <button
         type="submit"
-        className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
+        className="rounded-full bg-sky-500 px-5 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-6px_rgb(14_165_233/0.6)] transition hover:bg-sky-400 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
       >
         {submitLabel}
       </button>
@@ -159,7 +159,7 @@ export function AddTodoForm({
 
   return (
     <TodoModal title="Tambah Tugas" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-3.5">
         <TodoFormFields
           text={input}
           onTextChange={setInput}
@@ -216,7 +216,7 @@ export function EditTodoForm({
 
   return (
     <TodoModal title="Edit Tugas" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-3.5">
         <TodoFormFields
           text={editText}
           onTextChange={setEditText}

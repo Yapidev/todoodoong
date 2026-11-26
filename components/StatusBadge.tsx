@@ -1,15 +1,16 @@
 import { statusLabel, type Status } from "./todo-types";
 
 const STYLES: Record<Status, string> = {
-  todo: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
-  doing: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
-  done: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+  todo: "border-slate-900/12 bg-white/55 text-slate-700 dark:border-white/15 dark:bg-white/10 dark:text-slate-200",
+  doing:
+    "border-amber-500/25 bg-amber-400/20 text-amber-900 dark:border-amber-300/25 dark:bg-amber-400/18 dark:text-amber-200",
+  done: "border-emerald-500/25 bg-emerald-400/20 text-emerald-900 dark:border-emerald-300/25 dark:bg-emerald-400/18 dark:text-emerald-200",
 };
 
 export default function StatusBadge({ status }: { status: Status }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium ${STYLES[status]}`}
+      className={`inline-flex shrink-0 items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium backdrop-blur-sm ${STYLES[status]}`}
     >
       {statusLabel(status)}
     </span>
