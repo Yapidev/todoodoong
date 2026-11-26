@@ -18,7 +18,13 @@ export const metadata: Metadata = {
   description:
     "Todo app dengan board kanban, drag-and-drop, tabel, list, dan checklist. Data tersimpan di perangkatmu.",
   manifest: "/manifest.json",
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icon-192.png",
+  },
 };
 
 export const viewport: Viewport = {
