@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import BrandLogo from "./BrandLogo";
 import KanbanBoard from "./KanbanBoard";
 import StatusBadge from "./StatusBadge";
 import Toast from "./Toast";
@@ -116,28 +117,28 @@ const EMPTY_HINTS: Record<View, string> = {
 };
 
 function ProgressRing({ percent }: { percent: number }) {
-  const radius = 20;
+  const radius = 19;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.max(0, Math.min(100, percent));
   const offset = circumference - (clamped / 100) * circumference;
 
   return (
-    <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
-      <svg className="-rotate-90 h-12 w-12" viewBox="0 0 48 48" aria-hidden="true">
+    <div className="relative flex h-11 w-11 shrink-0 items-center justify-center">
+      <svg className="-rotate-90 h-11 w-11" viewBox="0 0 44 44" aria-hidden="true">
         <circle
-          cx="24"
-          cy="24"
+          cx="22"
+          cy="22"
           r={radius}
           fill="none"
-          strokeWidth="4"
+          strokeWidth="3.5"
           className="stroke-slate-900/10 dark:stroke-white/15"
         />
         <circle
-          cx="24"
-          cy="24"
+          cx="22"
+          cy="22"
           r={radius}
           fill="none"
-          strokeWidth="4"
+          strokeWidth="3.5"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -380,24 +381,13 @@ export default function TodoApp() {
         tabIndex={-1}
       />
 
-      <main className="mx-auto flex min-h-dvh w-full max-w-[1340px] items-start justify-center gap-4 px-3 pb-32 pt-4 sm:px-6 sm:pt-6 lg:py-6 lg:pb-32">
+      <main className="mx-auto flex min-h-dvh w-full max-w-[1320px] items-start justify-center gap-4 px-3 pb-28 pt-4 sm:px-6 sm:pt-6 lg:h-dvh lg:pb-24 lg:pt-5">
         {/* Main Floating Glass Window */}
-        <div className="glass-window flex w-full flex-1 flex-col rounded-[28px] p-4 sm:rounded-[34px] sm:p-5 lg:p-6">
+        <div className="glass-window flex w-full flex-1 flex-col rounded-[28px] p-4 sm:rounded-[32px] sm:p-5 lg:h-full lg:min-h-0 lg:overflow-hidden lg:p-6">
           {/* Header Row */}
-          <header className="mb-4 flex flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
-            <div className="flex min-w-0 items-center gap-3.5">
-              <div
-                aria-hidden="true"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 text-white shadow-[0_8px_20px_rgb(14_165_233/0.35),inset_0_1px_0_rgb(255_255_255/0.55)]"
-              >
-                <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-                  <path
-                    fillRule="evenodd"
-                    d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
+          <header className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
+            <div className="flex min-w-0 items-center gap-3">
+              <BrandLogo className="h-10 w-10 shrink-0" />
               <div className="min-w-0">
                 <h1 className="text-xl font-semibold leading-tight tracking-[-0.025em] text-slate-900 sm:text-2xl dark:text-white">
                   Todoodoong
@@ -408,10 +398,19 @@ export default function TodoApp() {
               </div>
             </div>
 
-            <div className="flex w-full shrink-0 flex-wrap items-center gap-1.5 sm:w-auto sm:flex-nowrap sm:justify-end">
+            <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap sm:justify-end">
+              {doneCount > 0 && (
+                <button
+                  onClick={requestClearDone}
+                  className="whitespace-nowrap rounded-full bg-rose-500/12 px-3 py-2 text-xs font-medium text-rose-700 transition hover:bg-rose-500/20 dark:bg-rose-500/25 dark:text-white dark:hover:bg-rose-500/35"
+                >
+                  Hapus selesai ({doneCount})
+                </button>
+              )}
+
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-sky-500 px-4 py-2 text-[13px] font-semibold tracking-[-0.01em] text-white shadow-[0_10px_24px_-6px_rgb(14_165_233/0.55),inset_0_1px_0_rgb(255_255_255/0.38)] transition hover:bg-sky-400 active:scale-[0.98] sm:flex-initial dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
+                className="glass-btn-primary flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-semibold tracking-[-0.01em] transition active:scale-[0.98] sm:flex-initial"
               >
                 + Tambah Tugas
                 <kbd
@@ -422,79 +421,72 @@ export default function TodoApp() {
                 </kbd>
               </button>
 
-              <button
-                onClick={() => setIsSearchOpen(true)}
-                aria-label="Buka pencarian"
-                title="Cari tugas (/)"
-                className="glass-panel flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-700 transition hover:bg-white/80 lg:hidden dark:text-white dark:hover:bg-white/20"
-              >
-                <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
-                  <path
-                    fillRule="evenodd"
-                    d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-
-              <button
-                onClick={toggleTheme}
-                aria-label={theme === "dark" ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
-                title={theme === "dark" ? "Mode terang" : "Mode gelap"}
-                className="glass-panel flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-700 transition hover:bg-white/80 lg:hidden dark:text-white dark:hover:bg-white/20"
-              >
-                {theme === "dark" ? (
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
-                    <path d="M10 2a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0v-.75A.75.75 0 0 1 10 2Zm0 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0 2.25a.75.75 0 0 1-.75-.75v-.75a.75.75 0 0 1 1.5 0v.75a.75.75 0 0 1-.75.75ZM2 10a.75.75 0 0 1 .75-.75h.75a.75.75 0 0 1 0 1.5h-.75A.75.75 0 0 1 2 10Zm14.5 0a.75.75 0 0 1 .75-.75h.75a.75.75 0 0 1 0 1.5h-.75a.75.75 0 0 1-.75-.75ZM4.343 4.343a.75.75 0 0 1 1.061 0l.53.53a.75.75 0 0 1-1.06 1.061l-.53-.53a.75.75 0 0 1 0-1.061Zm9.723 9.723a.75.75 0 0 1 1.06 0l.53.53a.75.75 0 1 1-1.06 1.061l-.53-.53a.75.75 0 0 1 0-1.061ZM15.657 4.343a.75.75 0 0 1 0 1.061l-.53.53a.75.75 0 0 1-1.061-1.06l.53-.53a.75.75 0 0 1 1.061 0ZM5.996 14.066a.75.75 0 0 1 0 1.06l-.53.53a.75.75 0 0 1-1.06-1.06l.53-.53a.75.75 0 0 1 1.06 0Z" />
-                  </svg>
-                ) : (
+              {/* Mobile / Tablet Utilities (shown when right sidebar is hidden) */}
+              <div className="flex items-center gap-1 lg:hidden">
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  aria-label="Buka pencarian"
+                  title="Cari tugas (/)"
+                  className="glass-panel flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-700 transition hover:bg-white/80 dark:text-white dark:hover:bg-white/20"
+                >
                   <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
                     <path
                       fillRule="evenodd"
-                      d="M7.455 2.004a.75.75 0 0 1 .53.91 6 6 0 0 0 6.854 7.507.75.75 0 0 1 .845 1.054A7.5 7.5 0 1 1 6.4 2.07a.75.75 0 0 1 1.055-.066Z"
+                      d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
                       clipRule="evenodd"
                     />
                   </svg>
-                )}
-              </button>
+                </button>
 
-              <div className="flex items-center gap-1">
+                <button
+                  onClick={toggleTheme}
+                  aria-label={theme === "dark" ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
+                  title={theme === "dark" ? "Mode terang" : "Mode gelap"}
+                  className="glass-panel flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-700 transition hover:bg-white/80 dark:text-white dark:hover:bg-white/20"
+                >
+                  {theme === "dark" ? (
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                      <path d="M10 2a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0v-.75A.75.75 0 0 1 10 2Zm0 13a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0 2.25a.75.75 0 0 1-.75-.75v-.75a.75.75 0 0 1 1.5 0v.75a.75.75 0 0 1-.75.75ZM2 10a.75.75 0 0 1 .75-.75h.75a.75.75 0 0 1 0 1.5h-.75A.75.75 0 0 1 2 10Zm14.5 0a.75.75 0 0 1 .75-.75h.75a.75.75 0 0 1 0 1.5h-.75a.75.75 0 0 1-.75-.75ZM4.343 4.343a.75.75 0 0 1 1.061 0l.53.53a.75.75 0 0 1-1.06 1.061l-.53-.53a.75.75 0 0 1 0-1.061Zm9.723 9.723a.75.75 0 0 1 1.06 0l.53.53a.75.75 0 1 1-1.06 1.061l-.53-.53a.75.75 0 0 1 0-1.061ZM15.657 4.343a.75.75 0 0 1 0 1.061l-.53.53a.75.75 0 0 1-1.061-1.06l.53-.53a.75.75 0 0 1 1.061 0ZM5.996 14.066a.75.75 0 0 1 0 1.06l-.53.53a.75.75 0 0 1-1.06-1.06l.53-.53a.75.75 0 0 1 1.06 0Z" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                      <path
+                        fillRule="evenodd"
+                        d="M7.455 2.004a.75.75 0 0 1 .53.91 6 6 0 0 0 6.854 7.507.75.75 0 0 1 .845 1.054A7.5 7.5 0 1 1 6.4 2.07a.75.75 0 0 1 1.055-.066Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  )}
+                </button>
+
                 <button
                   onClick={handleExport}
-                  className="whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-white/60 dark:text-white dark:hover:bg-white/14"
+                  className="whitespace-nowrap rounded-full px-2.5 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-white/60 dark:text-white dark:hover:bg-white/14"
                 >
                   Ekspor
                 </button>
                 <button
                   type="button"
                   onClick={() => importInputRef.current?.click()}
-                  className="whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-white/60 dark:text-white dark:hover:bg-white/14"
+                  className="whitespace-nowrap rounded-full px-2.5 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-white/60 dark:text-white dark:hover:bg-white/14"
                 >
                   Impor
                 </button>
-                {doneCount > 0 && (
-                  <button
-                    onClick={requestClearDone}
-                    className="whitespace-nowrap rounded-full bg-rose-500/12 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-500/20 dark:bg-rose-500/25 dark:text-white dark:hover:bg-rose-500/35"
-                  >
-                    Hapus selesai ({doneCount})
-                  </button>
-                )}
               </div>
             </div>
           </header>
 
-          {/* Spatial Bento Telemetry Strip */}
+          {/* Unified Telemetry Strip */}
           <section
             aria-label="Ringkasan tugas"
-            className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4"
+            className="mb-4 grid shrink-0 grid-cols-2 gap-3 lg:grid-cols-4"
           >
             <div className="glass-panel flex flex-col justify-between rounded-2xl px-4 py-3">
               <span className="text-[11px] font-medium uppercase tracking-[0.06em] text-slate-600 dark:text-slate-300/80">
                 Tugas Aktif
               </span>
               <div className="mt-1.5 flex items-baseline gap-2">
-                <span className="text-[26px] font-semibold leading-none tracking-[-0.03em] tabular-nums text-slate-900 dark:text-white">
+                <span className="text-2xl font-semibold leading-none tracking-[-0.03em] tabular-nums text-slate-900 dark:text-white">
                   {activeCount}
                 </span>
                 <span className="text-xs text-slate-500 dark:text-slate-300/75">
@@ -504,14 +496,11 @@ export default function TodoApp() {
             </div>
 
             <div className="glass-panel flex flex-col justify-between rounded-2xl px-4 py-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-medium uppercase tracking-[0.06em] text-slate-600 dark:text-slate-300/80">
-                  Dalam Proses
-                </span>
-                <span className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_10px_rgb(251_191_36/0.8)]" />
-              </div>
+              <span className="text-[11px] font-medium uppercase tracking-[0.06em] text-slate-600 dark:text-slate-300/80">
+                Dalam Proses
+              </span>
               <div className="mt-1.5 flex items-baseline gap-2">
-                <span className="text-[26px] font-semibold leading-none tracking-[-0.03em] tabular-nums text-slate-900 dark:text-white">
+                <span className="text-2xl font-semibold leading-none tracking-[-0.03em] tabular-nums text-slate-900 dark:text-white">
                   {doingCount}
                 </span>
                 <span className="text-xs text-slate-500 dark:text-slate-300/75">
@@ -532,25 +521,14 @@ export default function TodoApp() {
               <ProgressRing percent={completionPercent} />
             </div>
 
-            <div className="glass-panel-deep flex flex-col justify-between rounded-2xl px-4 py-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-medium uppercase tracking-[0.06em] text-slate-600 dark:text-slate-300/80">
-                  Perhatian
-                </span>
-                <span
-                  className={`h-2 w-2 rounded-full ${
-                    overdueCount > 0
-                      ? "bg-rose-500 shadow-[0_0_10px_rgb(244_63_94/0.85)]"
-                      : highPriorityCount > 0
-                        ? "bg-sky-400 shadow-[0_0_10px_rgb(56_189_248/0.85)]"
-                        : "bg-emerald-400 shadow-[0_0_10px_rgb(52_211_153/0.85)]"
-                  }`}
-                />
-              </div>
+            <div className="glass-panel flex flex-col justify-between rounded-2xl px-4 py-3">
+              <span className="text-[11px] font-medium uppercase tracking-[0.06em] text-slate-600 dark:text-slate-300/80">
+                Perhatian
+              </span>
               <div className="mt-1.5 flex items-baseline gap-2">
                 {overdueCount > 0 ? (
                   <>
-                    <span className="text-[26px] font-semibold leading-none tracking-[-0.03em] tabular-nums text-rose-600 dark:text-rose-300">
+                    <span className="text-2xl font-semibold leading-none tracking-[-0.03em] tabular-nums text-rose-600 dark:text-rose-300">
                       {overdueCount}
                     </span>
                     <span className="text-xs text-rose-700/85 dark:text-rose-200/85">
@@ -559,7 +537,7 @@ export default function TodoApp() {
                   </>
                 ) : highPriorityCount > 0 ? (
                   <>
-                    <span className="text-[26px] font-semibold leading-none tracking-[-0.03em] tabular-nums text-slate-900 dark:text-white">
+                    <span className="text-2xl font-semibold leading-none tracking-[-0.03em] tabular-nums text-slate-900 dark:text-white">
                       {highPriorityCount}
                     </span>
                     <span className="text-xs text-slate-600 dark:text-slate-300/80">
@@ -577,7 +555,7 @@ export default function TodoApp() {
 
           {/* Conditional Command Bar: Active Search Chip + Non-Kanban Filter & Sort */}
           {showCommandBar && (
-            <div className="mb-4 flex w-full flex-wrap items-center gap-3">
+            <div className="mb-4 flex w-full shrink-0 flex-wrap items-center gap-3">
               {hasSearch && (
                 <div className="glass-panel inline-flex items-center gap-2 rounded-full py-1.5 pl-3.5 pr-2 text-xs text-slate-800 dark:text-white">
                   <button
@@ -585,7 +563,7 @@ export default function TodoApp() {
                     onClick={() => setIsSearchOpen(true)}
                     className="inline-flex items-center gap-1.5 font-medium text-slate-900 dark:text-white"
                   >
-                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-sky-500 dark:text-sky-400" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" aria-hidden="true">
                       <path
                         fillRule="evenodd"
                         d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
@@ -653,7 +631,7 @@ export default function TodoApp() {
           )}
 
           {/* Active Workspace View */}
-          <div className="flex w-full flex-1 flex-col">
+          <div className="flex w-full flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
             {view === "kanban" && (
               <KanbanBoard
                 todos={filtered}
@@ -690,23 +668,19 @@ export default function TodoApp() {
           </div>
 
           {todos.length === 0 && (
-            <div className="glass-panel mt-5 rounded-2xl px-6 py-8 text-center">
-              <p className="text-[13px] leading-relaxed text-slate-600 dark:text-slate-300/85">
-                {EMPTY_HINTS[view]}
-              </p>
-            </div>
+            <p className="mt-4 shrink-0 text-center text-xs text-slate-500 dark:text-slate-300/75">
+              {EMPTY_HINTS[view]}
+            </p>
           )}
 
           {todos.length > 0 && filtered.length === 0 && isFiltering && (
-            <div className="glass-panel mt-5 rounded-2xl px-6 py-8 text-center">
-              <p className="text-[13px] leading-relaxed text-slate-600 dark:text-slate-300/85">
-                Tidak ada tugas yang cocok dengan pencarian/filter.
-              </p>
-            </div>
+            <p className="mt-5 shrink-0 text-center text-xs text-slate-500 dark:text-slate-300/75">
+              Tidak ada tugas yang cocok dengan pencarian/filter.
+            </p>
           )}
 
           {todos.length > 0 && (
-            <footer className="mt-5 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300/75">
+            <footer className="mt-4 flex shrink-0 items-center justify-between text-xs text-slate-600 dark:text-slate-300/75">
               <p className="tabular-nums">
                 {activeCount} tugas aktif dari {todos.length} total
               </p>
@@ -715,7 +689,7 @@ export default function TodoApp() {
                 <kbd className="rounded bg-white/50 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:bg-white/12 dark:text-slate-200">
                   /
                 </kbd>{" "}
-                untuk cari ·{" "}
+                untuk cari,{" "}
                 <kbd className="rounded bg-white/50 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:bg-white/12 dark:text-slate-200">
                   1–4
                 </kbd>{" "}
@@ -725,18 +699,18 @@ export default function TodoApp() {
           )}
         </div>
 
-        {/* Detached Floating Vertical Glass Sidebar on the Right */}
+        {/* Floating Utility Sidebar on the Right */}
         <aside
           aria-label="Aksi cepat"
-          className="glass-pill sticky top-8 hidden shrink-0 flex-col items-center gap-2 rounded-full p-2 lg:flex"
+          className="glass-pill sticky top-8 hidden shrink-0 flex-col items-center gap-1.5 rounded-full p-2 lg:static lg:flex lg:self-start"
         >
           <button
             onClick={() => setIsSearchOpen(true)}
             title="Cari tugas (/)"
             aria-label="Cari tugas"
-            className={`relative flex h-10 w-10 items-center justify-center rounded-full transition ${
+            className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
               hasSearch
-                ? "bg-sky-500 text-white shadow-[0_6px_18px_rgb(14_165_233/0.45)] hover:bg-sky-400"
+                ? "glass-btn-primary"
                 : "text-slate-700 hover:bg-white/60 hover:text-slate-950 dark:text-white dark:hover:bg-white/16 dark:hover:text-white"
             }`}
           >
@@ -749,18 +723,7 @@ export default function TodoApp() {
             </svg>
           </button>
 
-          <button
-            onClick={() => setIsModalOpen(true)}
-            title="Tambah tugas baru (N)"
-            aria-label="Buka form tambah tugas"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-500 text-white shadow-[0_6px_18px_rgb(14_165_233/0.45)] transition hover:scale-105 hover:bg-sky-400 active:scale-95"
-          >
-            <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
-              <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-            </svg>
-          </button>
-
-          <div className="my-0.5 h-px w-6 bg-slate-900/12 dark:bg-white/15" />
+          <div className="my-0.5 h-px w-5 bg-slate-900/12 dark:bg-white/15" />
 
           <button
             onClick={handleExport}
@@ -786,7 +749,7 @@ export default function TodoApp() {
             </svg>
           </button>
 
-          <div className="my-0.5 h-px w-6 bg-slate-900/12 dark:bg-white/15" />
+          <div className="my-0.5 h-px w-5 bg-slate-900/12 dark:bg-white/15" />
 
           <button
             onClick={toggleTheme}
@@ -897,7 +860,7 @@ export default function TodoApp() {
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(false)}
-                  className="rounded-full bg-sky-500 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-sky-400 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
+                  className="glass-btn-primary rounded-full px-4 py-1.5 text-xs font-semibold transition active:scale-[0.98]"
                 >
                   Selesai
                 </button>
@@ -921,7 +884,7 @@ export default function TodoApp() {
             </button>
             <button
               onClick={confirmDelete.confirm}
-              className="rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-6px_rgb(225_29_72/0.6)] transition hover:bg-rose-500"
+              className="glass-btn-danger rounded-full px-4 py-2 text-sm font-semibold transition active:scale-[0.98]"
             >
               Hapus
             </button>
@@ -948,8 +911,8 @@ export default function TodoApp() {
         />
       )}
 
-      {/* Floating Spatial Bottom Glass Dock */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-3 z-30 flex flex-col items-center gap-2 px-3 pb-[env(safe-area-inset-bottom)]">
+      {/* Floating Bottom View Dock */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-3 pb-[env(safe-area-inset-bottom)]">
         <nav
           aria-label="Pilih tampilan"
           className="glass-pill pointer-events-auto flex max-w-full items-center gap-1 rounded-full p-1.5"
@@ -961,9 +924,9 @@ export default function TodoApp() {
                 key={v.key}
                 onClick={() => setView(v.key)}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium tracking-[-0.01em] transition sm:px-4 sm:text-[13px] ${
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-medium tracking-[-0.01em] transition sm:px-4 sm:text-[13px] ${
                   active
-                    ? "bg-white/90 text-slate-900 shadow-[0_4px_14px_-4px_rgb(15_23_42/0.2)] dark:bg-white/22 dark:text-white dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.3)]"
+                    ? "bg-white/90 text-slate-900 shadow-sm dark:bg-white/22 dark:text-white"
                     : "text-slate-700 hover:bg-white/50 hover:text-slate-950 dark:text-white dark:hover:bg-white/14 dark:hover:text-white"
                 }`}
               >
@@ -978,32 +941,7 @@ export default function TodoApp() {
               </button>
             );
           })}
-
-          <div
-            aria-hidden="true"
-            className="mx-1 hidden h-6 w-px bg-slate-900/12 sm:block dark:bg-white/18"
-          />
-
-          <button
-            onClick={() => setIsModalOpen(true)}
-            aria-label="Tambah tugas cepat"
-            title="Tambah tugas baru (N)"
-            className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-500 text-white shadow-[0_6px_18px_rgb(14_165_233/0.5),inset_0_1px_0_rgb(255_255_255/0.45)] transition hover:scale-105 hover:bg-sky-400 active:scale-95 sm:flex dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
-          >
-            <svg viewBox="0 0 20 20" fill="currentColor" className="h-4.5 w-4.5" aria-hidden="true">
-              <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-            </svg>
-          </button>
         </nav>
-
-        {/* Subtle visionOS spatial window handle */}
-        <div
-          aria-hidden="true"
-          className="hidden items-center gap-2 sm:flex"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-slate-900/25 dark:bg-white/30" />
-          <span className="h-1.5 w-20 rounded-full bg-slate-900/20 dark:bg-white/25" />
-        </div>
       </div>
     </>
   );

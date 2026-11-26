@@ -120,7 +120,7 @@ function FormActions({
       </button>
       <button
         type="submit"
-        className="rounded-full bg-sky-500 px-5 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-6px_rgb(14_165_233/0.6)] transition hover:bg-sky-400 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
+        className="glass-btn-primary rounded-full px-5 py-2 text-sm font-semibold transition active:scale-[0.98]"
       >
         {submitLabel}
       </button>
