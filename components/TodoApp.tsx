@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import BrandLogo from "./BrandLogo";
+import GlassSelect from "./GlassSelect";
 import KanbanBoard from "./KanbanBoard";
 import StatusBadge from "./StatusBadge";
 import Toast from "./Toast";
@@ -604,7 +605,7 @@ export default function TodoApp() {
               )}
 
               {view !== "kanban" && (
-                <label className="ml-auto flex shrink-0 items-center gap-2 text-xs text-slate-600 dark:text-slate-200">
+                <div className="ml-auto flex shrink-0 items-center gap-2 text-xs text-slate-600 dark:text-slate-200">
                   <svg
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -613,19 +614,15 @@ export default function TodoApp() {
                   >
                     <path d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Z" />
                   </svg>
-                  <select
+                  <GlassSelect
+                    size="sm"
                     value={sortKey}
-                    onChange={(e) => setSortKey(e.target.value as SortKey)}
-                    aria-label="Urutkan tugas"
-                    className="glass-input cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-medium text-slate-800 outline-none transition dark:text-white"
-                  >
-                    {SORTS.map((o) => (
-                      <option key={o.key} value={o.key}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    options={SORTS.map((o) => ({ value: o.key, label: o.label }))}
+                    onChange={setSortKey}
+                    ariaLabel="Urutkan tugas"
+                    className="min-w-[118px]"
+                  />
+                </div>
               )}
             </div>
           )}

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import GlassSelect, { type GlassSelectOption } from "./GlassSelect";
+import { StatusIcon } from "./StatusBadge";
 import TodoModal from "./TodoModal";
 import {
   COLUMNS,
@@ -19,7 +21,28 @@ import { updateTodos } from "./todo-store";
 type PriorityChoice = "none" | Priority;
 
 const inputClass =
-  "glass-input w-full rounded-2xl px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-300/60";
+  "glass-input w-full rounded-xl px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 dark:text-white dark:placeholder:text-slate-300/60";
+
+const STATUS_OPTIONS: GlassSelectOption<Status>[] = COLUMNS.map((c) => ({
+  value: c.key,
+  label: c.label,
+  icon: <StatusIcon status={c.key} className="h-3.5 w-3.5" />,
+}));
+
+const PRIORITY_ACCENT: Record<Priority, string> = {
+  low: "text-sky-700 dark:text-sky-300",
+  medium: "text-amber-700 dark:text-amber-300",
+  high: "text-rose-700 dark:text-rose-300",
+};
+
+const PRIORITY_OPTIONS: GlassSelectOption<PriorityChoice>[] = [
+  { value: "none", label: "Tidak ada" },
+  ...PRIORITIES.map((p) => ({
+    value: p.key as PriorityChoice,
+    label: p.label,
+    accentClass: PRIORITY_ACCENT[p.key],
+  })),
+];
 
 function TodoFormFields({
   text,
@@ -42,10 +65,16 @@ function TodoFormFields({
   onDueDateChange: (v: string) => void;
   placeholder?: string;
 }) {
+  const id = useId();
+  const statusId = `todo-status-${id}`;
+  const priorityId = `todo-priority-${id}`;
+  const dueDateId = `todo-due-${id}`;
+
   return (
     <>
       <input
         type="text"
+        name="text"
         value={text}
         autoFocus
         onChange={(e) => onTextChange(e.target.value)}
@@ -54,44 +83,46 @@ function TodoFormFields({
       />
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300">
+          <label
+            htmlFor={statusId}
+            className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300"
+          >
             Kolom
           </label>
-          <select
+          <GlassSelect
+            id={statusId}
             value={status}
-            onChange={(e) => onStatusChange(e.target.value as Status)}
-            className={inputClass}
-          >
-            {COLUMNS.map((c) => (
-              <option key={c.key} value={c.key}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+            options={STATUS_OPTIONS}
+            onChange={onStatusChange}
+            ariaLabel="Pilih kolom"
+          />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300">
+          <label
+            htmlFor={priorityId}
+            className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300"
+          >
             Prioritas
           </label>
-          <select
+          <GlassSelect
+            id={priorityId}
             value={priority}
-            onChange={(e) => onPriorityChange(e.target.value as PriorityChoice)}
-            className={inputClass}
-          >
-            <option value="none">Tidak ada</option>
-            {PRIORITIES.map((p) => (
-              <option key={p.key} value={p.key}>
-                {p.label}
-              </option>
-            ))}
-          </select>
+            options={PRIORITY_OPTIONS}
+            onChange={onPriorityChange}
+            ariaLabel="Pilih prioritas"
+          />
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300">
+        <label
+          htmlFor={dueDateId}
+          className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300"
+        >
           Tenggat (opsional)
         </label>
         <input
+          id={dueDateId}
+          name="dueDate"
           type="date"
           value={dueDate}
           onChange={(e) => onDueDateChange(e.target.value)}

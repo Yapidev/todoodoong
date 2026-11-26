@@ -1,6 +1,14 @@
-import { COLUMNS, STATUSES, type Status, type Todo } from "./todo-types";
+import GlassSelect, { type GlassSelectOption } from "./GlassSelect";
+import { StatusIcon } from "./StatusBadge";
+import { COLUMNS, type Status, type Todo } from "./todo-types";
 import SubtaskList from "./SubtaskList";
 import TodoMeta from "./TodoMeta";
+
+const STATUS_OPTIONS: GlassSelectOption<Status>[] = COLUMNS.map((c) => ({
+  value: c.key,
+  label: c.label,
+  icon: <StatusIcon status={c.key} className="h-3.5 w-3.5" />,
+}));
 
 export default function TodoChecklist({
   todos,
@@ -56,18 +64,14 @@ export default function TodoChecklist({
                 {todo.text}
                 <TodoMeta todo={todo} />
               </span>
-              <select
+              <GlassSelect
+                size="sm"
                 value={todo.status}
-                onChange={(e) => onStatusChange(todo.id, e.target.value as Status)}
-                aria-label="Ubah status"
-                className="glass-input shrink-0 cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium text-slate-800 outline-none transition dark:text-white"
-              >
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {COLUMNS.find((c) => c.key === s)?.label ?? s}
-                  </option>
-                ))}
-              </select>
+                options={STATUS_OPTIONS}
+                onChange={(next) => onStatusChange(todo.id, next)}
+                ariaLabel="Ubah status"
+                className="min-w-[148px] shrink-0"
+              />
               <button
                 onClick={() => onExpand(todo.id)}
                 aria-label={expanded ? "Tutup subtugas" : "Buka subtugas"}
