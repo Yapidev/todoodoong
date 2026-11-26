@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import {
+  closestCorners,
   DndContext,
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
+  pointerWithin,
   useDndContext,
   useDroppable,
   useSensor,
   useSensors,
+  type CollisionDetection,
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
@@ -26,13 +30,16 @@ import {
   type Status,
   type Todo,
 } from "./todo-types";
+import { StatusIcon } from "./StatusBadge";
 import SubtaskList from "./SubtaskList";
 import TodoMeta from "./TodoMeta";
 
-const DOT_GLOW: Record<Status, string> = {
-  todo: "bg-slate-400 shadow-[0_0_8px_rgb(148_163_184/0.75)] dark:bg-slate-300",
-  doing: "bg-amber-400 shadow-[0_0_10px_rgb(251_191_36/0.85)]",
-  done: "bg-emerald-400 shadow-[0_0_10px_rgb(52_211_153/0.85)]",
+const emptySubscribe = () => () => {};
+
+const kanbanCollisionDetection: CollisionDetection = (args) => {
+  const pointerCollisions = pointerWithin(args);
+  if (pointerCollisions.length > 0) return pointerCollisions;
+  return closestCorners(args);
 };
 
 function CardBody({
@@ -206,7 +213,7 @@ function QuickAdd({ onAdd }: { onAdd: (text: string) => void }) {
       }}
       placeholder="+ Tambah tugas"
       aria-label="Tambah tugas di kolom ini"
-      className="mt-3 w-full rounded-xl border border-slate-900/10 bg-white/35 px-3 py-2 text-xs text-slate-800 outline-none transition placeholder:text-slate-500 focus:border-sky-500 focus:bg-white/75 focus:ring-2 focus:ring-sky-400/20 dark:border-white/12 dark:bg-white/6 dark:text-white dark:placeholder:text-slate-300/65 dark:focus:border-sky-400 dark:focus:bg-white/14"
+      className="mt-3 w-full shrink-0 rounded-xl border border-slate-900/10 bg-white/35 px-3 py-2 text-xs text-slate-800 outline-none transition placeholder:text-slate-500 focus:border-sky-500 focus:bg-white/75 focus:ring-2 focus:ring-sky-400/20 dark:border-white/12 dark:bg-white/6 dark:text-white dark:placeholder:text-slate-300/65 dark:focus:border-sky-400 dark:focus:bg-white/14"
     />
   );
 }
@@ -246,13 +253,9 @@ function Column({
     isOver || (overCardInThisColumn && draggingFromOtherColumn);
 
   return (
-    <section
-      className={`flex w-[84vw] max-w-[330px] shrink-0 snap-start flex-col rounded-3xl p-3.5 sm:w-auto sm:max-w-none sm:flex-1 ${
-        status === "done" ? "glass-panel-deep" : "glass-panel"
-      }`}
-    >
-      <header className="mb-3 flex items-center gap-2.5 px-1">
-        <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${DOT_GLOW[status]}`} />
+    <section className="glass-panel flex w-[78vw] max-w-[300px] shrink-0 snap-center flex-col rounded-3xl p-3.5 sm:w-auto sm:max-w-none sm:flex-1 lg:h-full lg:min-h-0">
+      <header className="mb-3 flex shrink-0 items-center gap-2 px-1">
+        <StatusIcon status={status} className="h-4 w-4" />
         <h2 className="text-[13px] font-semibold tracking-[-0.01em] text-slate-900 dark:text-white">
           {column.label}
         </h2>
@@ -262,10 +265,8 @@ function Column({
       </header>
       <div
         ref={setNodeRef}
-        className={`flex flex-1 flex-col gap-2.5 rounded-2xl p-1 transition ${
-          showDropHint
-            ? "bg-sky-400/15 ring-2 ring-sky-400/75 shadow-[inset_0_0_24px_rgb(56_189_248/0.18)]"
-            : ""
+        className={`flex flex-1 flex-col gap-2.5 rounded-2xl p-1 transition lg:min-h-0 lg:overflow-y-auto lg:pr-1 ${
+          showDropHint ? "bg-sky-400/15 ring-2 ring-sky-400/75" : ""
         }`}
       >
         <SortableContext
@@ -287,8 +288,8 @@ function Column({
           ))}
         </SortableContext>
         {todos.length === 0 && (
-          <div className="flex flex-1 items-center justify-center rounded-2xl bg-slate-900/[0.03] px-4 py-8 dark:bg-white/[0.03]">
-            <p className="text-center text-xs text-slate-500 dark:text-slate-300/65">
+          <div className="flex flex-1 items-center justify-center px-4 py-8">
+            <p className="text-center text-xs text-slate-400 dark:text-slate-400/70">
               Tarik kartu ke sini
             </p>
           </div>
@@ -322,9 +323,14 @@ export default function KanbanBoard({
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const isClient = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -359,14 +365,39 @@ export default function KanbanBoard({
 
   const activeTodo = todos.find((t) => t.id === activeId) ?? null;
 
+  const overlay = (
+    <DragOverlay>
+      {activeTodo ? (
+        <div className="cursor-grabbing rotate-1 scale-[1.03] drop-shadow-[0_22px_36px_rgb(15_23_42/0.45)]">
+          <CardBody
+            todo={activeTodo}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </div>
+      ) : null}
+    </DragOverlay>
+  );
+
   return (
     <DndContext
+      id="kanban-dnd"
       sensors={sensors}
+      collisionDetection={kanbanCollisionDetection}
+      autoScroll={{
+        threshold: { x: 0.1, y: 0.15 },
+        acceleration: 2,
+        interval: 10,
+      }}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveId(null)}
     >
-      <div className="flex w-full min-h-[380px] gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
+      <div
+        className={`flex w-full min-h-[380px] gap-4 overflow-x-auto pb-2 lg:h-full lg:min-h-0 lg:overflow-hidden lg:pb-0 ${
+          activeId ? "" : "snap-x snap-mandatory"
+        }`}
+      >
         {STATUSES.map((status) => (
           <Column
             key={status}
@@ -385,17 +416,7 @@ export default function KanbanBoard({
           />
         ))}
       </div>
-      <DragOverlay>
-        {activeTodo ? (
-          <div className="cursor-grabbing rotate-1 scale-[1.03] drop-shadow-[0_22px_36px_rgb(15_23_42/0.45)]">
-            <CardBody
-              todo={activeTodo}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          </div>
-        ) : null}
-      </DragOverlay>
+      {isClient ? createPortal(overlay, document.body) : overlay}
     </DndContext>
   );
 }
