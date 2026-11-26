@@ -93,7 +93,9 @@ describe("TodoApp alur inti", () => {
     const user = userEvent.setup();
     await renderApp();
 
+    await user.click(screen.getByRole("button", { name: "Cari tugas" }));
     await user.type(screen.getByPlaceholderText(/Cari tugas/), "belanja");
+    await user.keyboard("{Escape}");
     expect(screen.getByText("Belanja")).toBeInTheDocument();
     expect(screen.queryByText("Olahraga")).not.toBeInTheDocument();
   });
